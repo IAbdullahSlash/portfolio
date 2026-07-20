@@ -623,12 +623,17 @@ const processSteps = [
   },
 ];
 
-// Zigzag positions (top%, left% of container). Cards alternate right/left.
+// Zigzag positions (top%, left% of container) calculated so each card's
+// top dot (16px from top) aligns exactly with the SVG path connection point markers.
+// Container: max-w-6xl (1152px) × 1350px, SVG viewBox: 0 0 85 100.
+// Card: w-80 (320px) wide, centered on SVG point.
+// left% = ((svgX/85 * 1152) - 160) / 1152 * 100
+// top% = ((svgY/100 * 1350) - 16) / 1350 * 100
 const cardPositions = [
-  { top: "2%",  left: "55%", rotate: 5 },   // 01 Research (right)
-  { top: "26%", left: "8%",  rotate: -5 },  // 02 Design (left)
-  { top: "50%", left: "55%", rotate: 4 },   // 03 Develop (right)
-  { top: "74%", left: "8%",  rotate: -3 },  // 04 Deploy (left)
+  { top: "11.8%", left: "67.3%", rotate: 5 },   // 01 Research  — SVG (69, 13)
+  { top: "35.8%", left: "12%",   rotate: -5 },   // 02 Design    — SVG (22, 37)
+  { top: "59.8%", left: "67.3%", rotate: 4 },    // 03 Develop   — SVG (69, 61)
+  { top: "83.8%", left: "12%",   rotate: -3 },   // 04 Deploy    — SVG (22, 85)
 ];
 
 // Card centers in a 85x100 viewBox (matches container aspect ratio ~1152/1350).
@@ -727,7 +732,7 @@ function Process() {
         <div className="md:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-[repeating-linear-gradient(to_bottom,#cbd5e1_0_6px,transparent_6px_12px)] z-0" />
 
         {/* Cards */}
-        <div className="flex flex-col gap-8 items-center md:block relative z-10 w-full">
+        <div className="flex flex-col gap-8 items-center md:block z-10 w-full">
           {processSteps.map((s, i) => (
             <div
               key={s.n}
