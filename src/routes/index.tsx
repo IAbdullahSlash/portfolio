@@ -623,12 +623,7 @@ const processSteps = [
   },
 ];
 
-// Zigzag positions (top%, left% of container) calculated so each card's
-// top dot (16px from top) aligns exactly with the SVG path connection point markers.
-// Container: max-w-6xl (1152px) × 1350px, SVG viewBox: 0 0 85 100.
-// Card: w-80 (320px) wide, centered on SVG point.
-// left% = ((svgX/85 * 1152) - 160) / 1152 * 100
-// top% = ((svgY/100 * 1350) - 16) / 1350 * 100
+
 const cardPositions = [
   { top: "11.8%", left: "67.3%", rotate: 5 },   // 01 Research  — SVG (69, 13)
   { top: "35.8%", left: "12%",   rotate: -5 },   // 02 Design    — SVG (22, 37)
@@ -668,16 +663,9 @@ function Process() {
           transition={{ duration: 0.7 }}
           className="md:absolute top-10 left-0 md:w-[460px] z-20 mb-16 md:mb-0"
         >
-          <div className="inline-block border border-gray-300 rounded-full px-5 py-1.5 text-sm text-gray-600 font-bold mb-8 shadow-sm bg-white">
-            My Process
-          </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] mb-6 tracking-tight">
             Here's how I turn ideas into real-world applications
           </h2>
-          <p className="text-gray-500 text-base md:text-lg max-w-sm font-medium leading-relaxed">
-            I follow a structured, creative, and highly technical approach to
-            turn ideas into robust full-stack applications.
-          </p>
         </motion.div>
 
         {/* Zigzag dotted path linking the cards (desktop) */}
@@ -743,22 +731,6 @@ function Process() {
             </div>
           ))}
         </div>
-
-        {/* Ready to ship badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="mt-16 md:mt-0 md:absolute md:bottom-0 md:left-1/2 md:-translate-x-1/2 flex justify-center"
-        >
-          <div
-            className="px-6 py-3 rounded-full text-white font-bold text-sm tracking-wide shadow-lg"
-            style={{ backgroundColor: RED }}
-          >
-            Ready to ship!
-          </div>
-        </motion.div>
       </div>
     </section>
   );
