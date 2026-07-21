@@ -171,16 +171,6 @@ function Hero() {
       id="top"
       className="relative min-h-screen flex items-center overflow-hidden pt-28 pb-16 px-6"
     >
-      <a
-        href={GITHUB_URL}
-        target="_blank"
-        rel="noreferrer"
-        className="hidden md:block absolute left-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition z-10"
-        aria-label="GitHub"
-      >
-        <GithubIcon className="w-6 h-6" />
-      </a>
-
       <div className="relative max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
         <div className="relative z-10">
           <motion.h1
@@ -215,7 +205,7 @@ function Hero() {
               View My Work
             </a>
             <a
-              href={MAILTO}
+              href="#contact"
               className="px-6 py-3 rounded-full border border-white/30 text-sm font-semibold hover:bg-white hover:text-black transition"
             >
               Contact Me
@@ -256,7 +246,7 @@ function Hero() {
               )}
             </span>
             <span className="text-[10px] tracking-[0.2em] text-white/80 uppercase">
-              {playing ? "Playing" : "Play Reel"}
+              {playing ? "" : ""}
             </span>
           </button>
         </motion.div>
