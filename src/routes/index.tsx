@@ -607,7 +607,7 @@ const processSteps = [
   {
     n: "04",
     title: "Deploy",
-    body: "Rigorous testing, performance optimization, and seamless deployment to cloud infrastructure, followed by ongoing support.",
+    body: "Rigorous testing, performance optimization, and seamless deployment to cloud infrastructure, followed by ongoing feedback.",
   },
 ];
 
@@ -635,10 +635,10 @@ function Process() {
   return (
     <section
       id="process"
-      className="relative bg-white text-gray-900 py-28 md:py-36 px-6 overflow-hidden"
+      className="relative bg-black text-white py-28 md:py-36 px-6 overflow-hidden border-t border-white/5"
       style={{
         backgroundImage:
-          "linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)",
+          "linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)",
         backgroundSize: "80px 80px",
       }}
     >
@@ -651,8 +651,11 @@ function Process() {
           transition={{ duration: 0.7 }}
           className="md:absolute top-10 left-0 md:w-[460px] z-20 mb-16 md:mb-0"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] mb-6 tracking-tight">
-            Here's how I turn ideas into real-world applications
+          <span className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6">
+            Process
+          </span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight">
+            Here's how I turn ideas into <span style={{ color: RED }}>real-world</span> applications
           </h2>
         </motion.div>
 
@@ -666,7 +669,7 @@ function Process() {
           <path
             d={CURVE_D}
             fill="none"
-            stroke="#cbd5e1"
+            stroke="rgba(255,255,255,0.15)"
             strokeDasharray="5 6"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -677,7 +680,7 @@ function Process() {
           <motion.path
             d={CURVE_D}
             fill="none"
-            stroke="#111827"
+            stroke={RED}
             strokeDasharray="5 6"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -697,15 +700,15 @@ function Process() {
               cx={cx}
               cy={cy}
               r="2.5"
-              fill="#111827"
-              stroke="#fff"
+              fill={RED}
+              stroke="#000"
               strokeWidth="1"
             />
           ))}
         </svg>
 
         {/* Mobile vertical line */}
-        <div className="md:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-[repeating-linear-gradient(to_bottom,#cbd5e1_0_6px,transparent_6px_12px)] z-0" />
+        <div className="md:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-[repeating-linear-gradient(to_bottom,rgba(255,255,255,0.15)_0_6px,transparent_6px_12px)] z-0" />
 
         {/* Cards */}
         <div className="flex flex-col gap-8 items-center md:block z-10 w-full">
@@ -743,32 +746,41 @@ function ProcessCard({
       onHoverStart={() => setHover(true)}
       onHoverEnd={() => setHover(false)}
       whileHover={{ scale: 1.03 }}
-      className="w-72 sm:w-80 rounded-[2rem] p-2 relative flex flex-col items-center z-10 bg-white border border-gray-200 shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.12)]"
+      className="w-72 sm:w-80 rounded-[2rem] p-2 relative flex flex-col items-center z-10 bg-[#0a0a0a] border border-white/10 shadow-[0_15px_40px_rgba(0,0,0,0.4)] hover:border-[#ff2a2a]/50 transition-colors duration-700"
       style={{ transform: `rotate(${rotate}deg)` }}
     >
-      <div className="w-5 h-5 rounded-full absolute top-4 border border-gray-300 z-10 bg-gradient-to-br from-gray-300 to-gray-100 shadow-inner" />
       <div
-        className="w-full rounded-[1.5rem] mt-8 p-8 flex flex-col min-h-[220px] transition-colors duration-700"
+        className="w-5 h-5 rounded-full absolute top-4 border z-10 transition-colors duration-700"
         style={{
-          backgroundColor: hover ? RED : "#f4f4f4",
-          color: hover ? "#fff" : undefined,
+          background: hover ? RED : "rgba(255,255,255,0.08)",
+          borderColor: hover ? RED : "rgba(255,255,255,0.2)",
+        }}
+      />
+      <div
+        className="w-full rounded-[1.5rem] mt-8 p-8 flex flex-col min-h-[220px] transition-colors duration-700 border"
+        style={{
+          backgroundColor: hover ? RED : "rgba(255,255,255,0.03)",
+          borderColor: hover ? RED : "rgba(255,255,255,0.08)",
         }}
       >
         <span
-          className="text-xl font-bold mb-2 font-serif italic transition-colors duration-700"
-          style={{ color: hover ? "rgba(255,255,255,0.7)" : "#9ca3af" }}
+          className="inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-black mb-4 transition-colors duration-700"
+          style={{
+            background: hover ? "#000" : RED,
+            color: hover ? "#fff" : "#fff",
+          }}
         >
           {step.n}
         </span>
         <h3
           className="text-2xl font-black mb-3 tracking-tight transition-colors duration-700"
-          style={{ color: hover ? "#fff" : "#111827" }}
+          style={{ color: "#fff" }}
         >
           {step.title}
         </h3>
         <p
           className="text-sm leading-relaxed font-medium transition-colors duration-700"
-          style={{ color: hover ? "rgba(255,255,255,0.9)" : "#6b7280" }}
+          style={{ color: hover ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.55)" }}
         >
           {step.body}
         </p>
