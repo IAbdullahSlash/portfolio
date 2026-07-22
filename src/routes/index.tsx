@@ -8,6 +8,7 @@ import {
   useSpring,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
+import { ArrowUpRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -795,25 +796,63 @@ const experiences = [
   {
     period: "Jun 2025 — Dec 2025",
     role: "Python Developer Intern",
-    org: "Stock Market Analytics",
+    org: "CANDLESTROKES TECHNOLOGIES PVT LTD",
     body: "Built an intelligent Python + PyQt5 desktop application for real-time Indian equities analysis. Streamed live and historical market data, engineered technical indicators (MA, RSI, MACD), and visualized market trends to help investors make smarter, data-driven decisions.",
     tech: ["Python", "PyQt5", "Pandas", "NumPy", "PyQtGraph"],
   },
   {
-    period: "2024 — Present",
+    period: "Oct 2025 — July 2026",
     role: "Operations & Logistics Lead",
     org: "GDG On Campus · Integral University",
-    body: "Lead operations, logistics, and event coordination for Google Developer Group activities on campus — from developer workshops to community meetups, ensuring smooth delivery for hundreds of student developers.",
+    body: "Led operations, logistics, and event coordination for Google Developer Group activities on campus — from developer workshops to community meetups, ensuring smooth delivery for hundreds of student developers.",
     tech: ["Leadership", "Event Ops", "Community"],
   },
+    {
+    period: "6 Nov 2025",
+    role: "Hackathon Winner",
+    org: "Internal SIH - Integral University, Lucknow",
+    body: "Won 1st place in the Internal Smart India Hackathon (SIH). Designed, developed, and presented a fully functional prototype with a collaborative team, delivering an innovative solution within the hackathon timeline.",
+    tech: ["Ideation & Development", "Team Presentation", "Team Work"],
+  },
   {
-    period: "2024",
+    period: "30 Jan 2026",
     role: "Hackathon Winner",
     org: "HackVeda × IBM × AWS — ILM University, Greater Noida",
-    body: "Won the HackVeda National Level Hackathon organized in collaboration with IBM and AWS. Designed, built, and pitched a full working prototype under a tight 24-hour build window with a small team.",
+    body: "Won the HackVeda National Level Hackathon organized in collaboration with IBM and AWS. Designed, built, and pitched a full working prototype under a tight 24-hour build window with my team.",
     tech: ["Full Stack", "AI/ML", "Team Leadership"],
   },
 ];
+
+function ExperienceArrowButton({ href }: { href?: string }) {
+  const content = (
+    <motion.button
+      type="button"
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.94 }}
+      className="group/arrow relative shrink-0 w-11 h-11 md:w-12 md:h-12 rounded-full border border-white/15 bg-white/[0.02] flex items-center justify-center overflow-hidden transition-colors duration-300 hover:border-transparent"
+      aria-label="View details"
+    >
+      <span
+        className="absolute inset-0 scale-0 rounded-full transition-transform duration-300 ease-out group-hover/arrow:scale-100"
+        style={{ background: RED }}
+      />
+      <ArrowUpRight
+        className="relative w-5 h-5 text-white/70 transition-all duration-300 group-hover/arrow:text-black group-hover/arrow:rotate-45"
+        strokeWidth={2.25}
+      />
+    </motion.button>
+  );
+
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer">
+        {content}
+      </a>
+    );
+  }
+
+  return content;
+}
 
 function Experience() {
   const ref = useRef<HTMLDivElement>(null);
@@ -869,25 +908,38 @@ function Experience() {
                   className="absolute -left-8 md:-left-16 top-2 w-4 h-4 rounded-full ring-4 ring-black"
                   style={{ background: RED }}
                 />
-                <div className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: RED }}>
-                  {e.period}
-                </div>
-                <h3 className="mt-2 text-2xl md:text-3xl font-black">
-                  {e.role}
-                </h3>
-                <p className="text-sm text-white/60 mt-1">{e.org}</p>
-                <p className="mt-4 text-white/75 leading-relaxed max-w-2xl">
-                  {e.body}
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {e.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="text-xs px-3 py-1 rounded-full border border-white/15 text-white/70"
-                    >
-                      {t}
-                    </span>
-                  ))}
+                <div className="flex items-start justify-between gap-6">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: RED }}>
+                      {e.period}
+                    </div>
+                    <h3 className="mt-2 text-2xl md:text-3xl font-black">
+                      {e.role}
+                    </h3>
+                    <p className="text-sm text-white/60 mt-1">{e.org}</p>
+                    <p className="mt-4 text-white/75 leading-relaxed max-w-2xl">
+                      {e.body}
+                    </p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {e.tech.map((t) => (
+                        <span
+                          key={t}
+                          className="text-xs px-3 py-1 rounded-full border border-white/15 text-white/70"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <ExperienceArrowButton href={
+                    i === 0
+                      ? "https://drive.google.com/file/d/1S5PJjtt_vX1GAffsJ8DN5LJ62z7A_qB7/view?usp=sharing"
+                      : i === 1
+                        ? "https://www.linkedin.com/posts/gdgc-googledevelopergroups-gdgciul-ugcPost-7379898750208561152-63zW/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
+                        : i === 2
+                          ? "https://www.linkedin.com/posts/abdullahslash_sih-smartindiahackathon-integraluniversity-ugcPost-7393330395666255873-P7DO/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
+                          : "https://www.linkedin.com/posts/abdullahslash_grateful-for-this-win-proud-to-share-ugcPost-7424507956400033793-vqri/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
+                  } />
                 </div>
               </motion.div>
             ))}
@@ -1070,7 +1122,7 @@ function ProjectCard({
                 : "bg-white text-black hover:bg-white/90"
             }`}
           >
-            GitHub →
+            Live Link →
           </a>
         </div>
       </motion.article>
