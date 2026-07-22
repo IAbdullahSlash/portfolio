@@ -36,7 +36,20 @@ const GITHUB_URL = "https://github.com/IAbdullahSlash";
 const LINKEDIN_URL = "https://www.linkedin.com/in/abdullahslash";
 const EMAIL = "abdullahaz7677@gmail.com";
 const PHONE = "+91 8756857677";
-const MAILTO = `mailto:${EMAIL}?subject=Hiring%20Inquiry%20%E2%80%93%20Portfolio&body=Hello%20Abdullah,%0D%0A%0D%0AI%20came%20across%20your%20portfolio%20and%20would%20like%20to%20discuss%20an%20opportunity%20with%20you.%0D%0A%0D%0ALooking%20forward%20to%20hearing%20from%20you.%0D%0ABest%20Regards,`;
+// Opens Gmail's web compose window directly (instead of relying on the
+// visitor's OS-level default mail app), with Abdullah's address pre-filled
+// as the recipient.
+const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+  EMAIL
+)}&su=${encodeURIComponent("Hiring Inquiry – Portfolio")}&body=${encodeURIComponent(
+  "Hello Abdullah,\n\nI came across your portfolio and would like to discuss an opportunity with you.\n\nLooking forward to hearing from you.\nBest Regards,"
+)}`;
+// wa.me deep-link: opens WhatsApp (app on mobile, WhatsApp Web on desktop)
+// with a chat to this number pre-opened and a starter message ready to send.
+const WHATSAPP_NUMBER = PHONE.replace(/[^\d]/g, ""); // "918756857677"
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  "Hi Abdullah, I came across your portfolio and would like to connect!"
+)}`;
 const PROFILE_PIC =
   "https://cdn.phototourl.com/free/2026-07-21-abb6ec45-d13e-42a4-b41f-ad3f2db01d3f.jpg";
 
@@ -117,11 +130,37 @@ function LinkedInIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
+function MailIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="2" y="4" width="20" height="16" rx="2.5" />
+      <path d="m3 6.5 8.4 6.2a1.7 1.7 0 0 0 2.2 0L22 6.5" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.35.19 1.86.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35z" />
+      <path d="M12.02 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.42 1.26 4.86L2 22l5.32-1.4a9.9 9.9 0 0 0 4.7 1.2h.01c5.5 0 9.96-4.46 9.96-9.96S17.53 2 12.02 2zm0 18.2h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.15.83.84-3.07-.2-.31a8.2 8.2 0 0 1-1.26-4.36c0-4.55 3.71-8.25 8.28-8.25 2.21 0 4.28.86 5.85 2.42a8.2 8.2 0 0 1 2.42 5.84c0 4.55-3.71 8.26-8.28 8.26z" />
+    </svg>
+  );
+}
+
 function Nav() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/50 border-b border-white/5">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        <a href="#top" className="text-lg font-black tracking-tight">
+    <header className="fixed top-4 inset-x-0 z-50 px-4">
+      <div className="max-w-5xl mx-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+        <a href="#top" className="text-lg font-black tracking-tight shrink-0">
           Abdullah Azmi<span style={{ color: RED }}>.</span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm text-white/80">
@@ -138,12 +177,6 @@ function Nav() {
             </a>
           ))}
         </nav>
-        <a
-          href="#contact"
-          className="text-sm font-semibold px-5 py-2 rounded-full border border-white/20 bg-black text-white hover:bg-white hover:text-black transition"
-        >
-          Hire Me
-        </a>
       </div>
     </header>
   );
@@ -237,12 +270,32 @@ function Hero() {
           >
             <span className="w-14 h-14 rounded-full bg-white/95 text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition">
               {playing ? (
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                  <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" />
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
                 </svg>
               ) : (
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
-                  <path d="M8 5v14l11-7z" />
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" />
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
                 </svg>
               )}
             </span>
@@ -817,7 +870,7 @@ const experiences = [
   {
     period: "23 Apr 2026",
     role: "Article Publish",
-    org: "Internal SIH - Integral University, Lucknow",
+    org: "Department of Computer Science & Engineering - Integral University, Lucknow",
     body: "Authored and published The Art of Prompting article in the Department of Computer Science Annual magazine, exploring prompt engineering practices and their important techniques which can bring real change in AI driven workflows.",
     tech: ["Research & Analysis", "Literature Work", "Writing & Publishing"],
   },
@@ -1164,6 +1217,12 @@ const achievements = [
     org: "Integral University",
     body: "Operations & Logistics Lead for Google Developer Group on Campus, coordinating community events and workshops.",
   },
+  {
+    tag: "📝 Published",
+    title: "The Art of Prompting",
+    org: "Department of Computer Science — Integral University",
+    body: "Authored and published an article on prompt engineering in the department's annual magazine, exploring key techniques that drive impactful AI-driven workflows.",
+  },
 ];
 
 const certs = [
@@ -1258,13 +1317,13 @@ const education = [
   {
     period: "Aug 2024 — Present",
     degree: "B.Tech, Computer Science & Engineering",
-    org: "Integral University",
+    org: "Integral University - Department of Computer Science & Engineering",
     note: "Currently in the final year of my Bachelor's in CSE.",
   },
   {
     period: "Aug 2022 — Jun 2024",
     degree: "Diploma, Computer Science & Engineering",
-    org: "Integral University",
+    org: "Integral University - Department of Polytechnic",
     note: "Graduated with a 9.2 CGPA.",
   },
 ];
@@ -1355,17 +1414,23 @@ function Contact() {
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
           <a
-            href={MAILTO}
-            className="px-8 py-4 rounded-full text-white text-sm font-semibold hover:opacity-90 transition"
+            href={GMAIL_COMPOSE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-white text-sm font-semibold hover:opacity-90 transition"
             style={{ background: RED }}
           >
-            {EMAIL}
+            <MailIcon className="w-5 h-5" />
+            Email me
           </a>
           <a
-            href={`tel:${PHONE.replace(/\s/g, "")}`}
-            className="px-8 py-4 rounded-full border border-white/20 text-sm font-semibold hover:bg-white hover:text-black transition"
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/20 text-sm font-semibold hover:bg-white hover:text-black transition"
           >
-            {PHONE}
+            <WhatsAppIcon className="w-5 h-5" />
+            WhatsApp
           </a>
         </div>
 
@@ -1396,28 +1461,6 @@ function Footer() {
   return (
     <footer className="border-t border-white/5 px-6 py-10 text-sm text-white/40 bg-black">
       <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
-        <div>
-          © {new Date().getFullYear()} Abdullah Azmi
-          <span style={{ color: RED }}>.</span> All rights reserved.
-        </div>
-        <div className="flex items-center gap-4">
-          <a
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-white transition inline-flex items-center gap-2"
-          >
-            <LinkedInIcon className="w-4 h-4" /> LinkedIn
-          </a>
-          <a
-            href={GITHUB_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-white transition inline-flex items-center gap-2"
-          >
-            <GithubIcon className="w-4 h-4" /> GitHub
-          </a>
-        </div>
       </div>
     </footer>
   );
