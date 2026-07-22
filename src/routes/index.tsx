@@ -421,42 +421,48 @@ function TechMarquee() {
 const skillGroups: {
   title: string;
   subtitle: string;
-  featured?: boolean;
   items: { name: string; pct: number }[];
 }[] = [
   {
     title: "AI / ML",
     subtitle: "Core expertise",
-    featured: true,
     items: [
       { name: "Python", pct: 92 },
       { name: "TensorFlow", pct: 82 },
+      { name: "PyTorch", pct: 80 },
       { name: "Scikit-learn", pct: 86 },
       { name: "LangChain", pct: 88 },
-      { name: "LangFlow", pct: 85 },
-      { name: "LLaMA", pct: 80 },
-      { name: "Gemini", pct: 88 },
-      { name: "LLM Integration", pct: 90 },
+      { name: "LLM Fine-tuning", pct: 90 },
+      { name: "Data Pipeline Management", pct: 88 },
+      { name: "AI Agents", pct: 82 },
+      { name: "RAG Systems", pct: 84 },
+      { name: "Dataset Preparation", pct: 80 },
     ],
   },
   {
-    title: "Languages",
-    subtitle: "Daily drivers",
+    title: "Languages & Full Stack",
+    subtitle: "Code to deployment",
     items: [
-      { name: "JavaScript", pct: 90 },
-      { name: "TypeScript", pct: 85 },
+      { name: "MERN Stack", pct: 90 },
+      { name: "Python", pct: 88 },
+      { name: "Django", pct: 88 },
       { name: "SQL", pct: 88 },
-      { name: "HTML / CSS", pct: 86 },
+      { name: "PHP", pct: 72 },
+      { name: "Tkinter", pct: 88 },
+      { name: "FastAPI", pct: 88 },
+      { name: "Flask", pct: 88 },
     ],
   },
   {
-    title: "Full Stack",
-    subtitle: "End-to-end delivery",
+    title: "Research",
+    subtitle: "Applied research skills",
     items: [
-      { name: "React / Next.js", pct: 92 },
-      { name: "Node.js / Express", pct: 88 },
-      { name: "MongoDB / Supabase", pct: 87 },
-      { name: "Firebase", pct: 85 },
+      { name: "Critical Thinking and Problem-Solving", pct: 86 },
+      { name: "Data Visualization", pct: 82 },
+      { name: "Study of Decision Support Systems", pct: 80 },
+      { name: "Literature Review", pct: 84 },
+      { name: "Experimental Design", pct: 78 },
+      { name: "Porject management", pct: 82 },
     ],
   },
   {
@@ -465,27 +471,31 @@ const skillGroups: {
     items: [
       { name: "Pandas / NumPy", pct: 90 },
       { name: "PyQt5 / Matplotlib", pct: 84 },
+      { name: "Chart.js", pct: 76 },
+      { name: "Tableau", pct: 74 },
+      { name: "Power BI", pct: 74 },
       { name: "AWS", pct: 78 },
       { name: "GCP", pct: 76 },
-      { name: "Docker / Git", pct: 80 },
+      { name: "Azure", pct: 76 },
+      { name: "Docker / Kubernetes", pct: 80 },
+      { name: "Git / GitHub", pct: 85 },
     ],
   },
 ];
 
-function SkillMeter({ pct }: { pct: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.95", "start 0.55"],
-  });
-  const width = useTransform(scrollYProgress, [0, 1], ["0%", `${pct}%`]);
+function SkillChip({ name, i }: { name: string; i: number }) {
   return (
-    <div ref={ref} className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-      <motion.div
-        style={{ width, background: RED }}
-        className="h-full rounded-full"
-      />
-    </div>
+    <motion.span
+      initial={{ opacity: 0, scale: 0.85 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.35, delay: i * 0.03 }}
+      whileHover={{ scale: 1.06, y: -2 }}
+      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border bg-[#ff2a2a]/15 border-[#ff2a2a]/50 text-white text-sm font-medium whitespace-nowrap transition-colors"
+    >
+      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: RED }} />
+      {name}
+    </motion.span>
   );
 }
 
@@ -502,9 +512,7 @@ function SkillCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6, delay: index * 0.08 }}
-      className={`relative rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 overflow-hidden group hover:border-[#ff2a2a]/40 transition ${
-        group.featured ? "md:row-span-2" : ""
-      }`}
+      className="relative rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 overflow-hidden group hover:border-[#ff2a2a]/40 transition break-inside-avoid mb-6"
     >
       <div
         aria-hidden
@@ -530,17 +538,9 @@ function SkillCard({
           </div>
         </div>
 
-        <div className={`space-y-4 ${group.featured ? "md:columns-2 md:gap-x-8" : ""}`}>
-          {group.items.map((s) => (
-            <div key={s.name} className="break-inside-avoid">
-              <div className="flex justify-between items-center text-sm mb-1.5">
-                <span className="text-white/90 font-medium">{s.name}</span>
-                <span style={{ color: RED }} className="font-semibold text-xs">
-                  {s.pct}%
-                </span>
-              </div>
-              <SkillMeter pct={s.pct} />
-            </div>
+        <div className="flex flex-wrap gap-2.5">
+          {group.items.map((s, i) => (
+            <SkillChip key={s.name} name={s.name} i={i} />
           ))}
         </div>
       </div>
@@ -571,11 +571,11 @@ function Skills() {
           </motion.h2>
           <p className="mt-6 text-white/60 text-lg">
             A competency map of the languages, frameworks, and platforms I use to
-            turn ideas into shipped products.
+            Excel at my work as an Engineer.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="md:columns-2 gap-6">
           {skillGroups.map((g, i) => (
             <SkillCard key={g.title} group={g} index={i} />
           ))}
