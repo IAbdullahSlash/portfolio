@@ -32,12 +32,12 @@ export const Route = createFileRoute("/")({
 });
 
 const GITHUB_URL = "https://github.com/IAbdullahSlash";
-const LINKEDIN_URL = "https://www.linkedin.com/in/abdullah-azmi/";
+const LINKEDIN_URL = "https://www.linkedin.com/in/abdullahslash";
 const EMAIL = "abdullahaz7677@gmail.com";
 const PHONE = "+91 8756857677";
 const MAILTO = `mailto:${EMAIL}?subject=Hiring%20Inquiry%20%E2%80%93%20Portfolio&body=Hello%20Abdullah,%0D%0A%0D%0AI%20came%20across%20your%20portfolio%20and%20would%20like%20to%20discuss%20an%20opportunity%20with%20you.%0D%0A%0D%0ALooking%20forward%20to%20hearing%20from%20you.%0D%0ABest%20Regards,`;
 const PROFILE_PIC =
-  "https://media.licdn.com/dms/image/v2/D4D03AQHrssaNdhyBoA/profile-displayphoto-shrink_400_400/B4DZdZmv9WHwAk-/0/1749555020330?e=1785974400&v=beta&t=xtIwiTBUYMmorzw44MJG40fgcawgBRmlNh3_Cb2xvrA";
+  "https://cdn.phototourl.com/free/2026-07-21-abb6ec45-d13e-42a4-b41f-ad3f2db01d3f.jpg";
 
 const RED = "#ff2a2a";
 
@@ -138,7 +138,7 @@ function Nav() {
           ))}
         </nav>
         <a
-          href={MAILTO}
+          href="#contact"
           className="text-sm font-semibold px-5 py-2 rounded-full border border-white/20 bg-black text-white hover:bg-white hover:text-black transition"
         >
           Hire Me
@@ -286,7 +286,7 @@ function About() {
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-start">
         <motion.div style={{ y: yImg, rotate }} className="md:sticky md:top-32">
-          <div className="aspect-[3/4] max-w-sm mx-auto rounded-3xl bg-black/40 border-2 border-white/30 overflow-hidden shadow-2xl">
+          <div className="w-full h-[70vh] lg:h-[85vh] mx-auto rounded-3xl bg-black/40 border-2 border-white/30 overflow-hidden shadow-2xl">
             <img
               src={PROFILE_PIC}
               alt="Abdullah Azmi"
@@ -309,12 +309,6 @@ function About() {
               className="w-11 h-11 rounded-full bg-black/40 border border-white/30 flex items-center justify-center hover:bg-black transition"
             >
               <GithubIcon className="w-4 h-4" />
-            </a>
-            <a
-              href={MAILTO}
-              className="w-11 h-11 rounded-full bg-black/40 border border-white/30 flex items-center justify-center hover:bg-black transition text-sm"
-            >
-              ✉
             </a>
           </div>
         </motion.div>
@@ -349,12 +343,16 @@ function About() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="text-lg md:text-xl text-white/95 leading-relaxed"
           >
-            I'm a Computer Science undergraduate at{" "}
-            <span className="font-black text-black">Integral University</span>,
-            passionate about building scalable software that solves real-world
-            problems. I love creating meaningful impact for people, startups,
-            and businesses — streamlining workflows and transforming traditional
-            processes through AI and full-stack engineering.
+            As an <span className="font-black text-black">AI Engineer & Software developer </span> I work under Artificial Intelligence, software engineering, and applied research. I have experience in developing scalable, data driven, and machine learning algorithem applications. I enjoy experimenting with new technologies, and finding smarter ways to solve complex challenges.
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="mt-6 text-xl md:text-2xl font-black text-white"
+          >
+            Always learning, always building, always shipping.
           </motion.p>
 
           <motion.div
@@ -365,7 +363,7 @@ function About() {
             className="mt-10 grid grid-cols-3 gap-4"
           >
             {[
-              { k: "9.2", v: "Diploma CGPA" },
+              { k: "IEEE", v: "Member" },
               { k: "2×", v: "Hackathon Wins" },
               { k: "10+", v: "Shipped Projects" },
             ].map((s) => (
