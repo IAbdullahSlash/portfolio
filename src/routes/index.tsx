@@ -807,12 +807,19 @@ const experiences = [
     body: "Led operations, logistics, and event coordination for Google Developer Group activities on campus — from developer workshops to community meetups, ensuring smooth delivery for hundreds of student developers.",
     tech: ["Leadership", "Event Ops", "Community"],
   },
-    {
+  {
     period: "6 Nov 2025",
     role: "Hackathon Winner",
     org: "Internal SIH - Integral University, Lucknow",
     body: "Won 1st place in the Internal Smart India Hackathon (SIH). Designed, developed, and presented a fully functional prototype with a collaborative team, delivering an innovative solution within the hackathon timeline.",
     tech: ["Ideation & Development", "Team Presentation", "Team Work"],
+  },
+  {
+    period: "23 Apr 2026",
+    role: "Article Publish",
+    org: "Internal SIH - Integral University, Lucknow",
+    body: "Authored and published The Art of Prompting article in the Department of Computer Science Annual magazine, exploring prompt engineering practices and their important techniques which can bring real change in AI driven workflows.",
+    tech: ["Research & Analysis", "Literature Work", "Writing & Publishing"],
   },
   {
     period: "30 Jan 2026",
@@ -938,7 +945,9 @@ function Experience() {
                         ? "https://www.linkedin.com/posts/gdgc-googledevelopergroups-gdgciul-ugcPost-7379898750208561152-63zW/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
                         : i === 2
                           ? "https://www.linkedin.com/posts/abdullahslash_sih-smartindiahackathon-integraluniversity-ugcPost-7393330395666255873-P7DO/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
-                          : "https://www.linkedin.com/posts/abdullahslash_grateful-for-this-win-proud-to-share-ugcPost-7424507956400033793-vqri/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
+                          : i === 3
+                            ? "https://heyzine.com/flip-book/866962fcb7.html#page/28"
+                            : "https://www.linkedin.com/posts/abdullahslash_grateful-for-this-win-proud-to-share-ugcPost-7424507956400033793-vqri/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
                   } />
                 </div>
               </motion.div>
@@ -950,36 +959,38 @@ function Experience() {
   );
 }
 
-/* ------------------------------------------------------------------ */
 /* PROJECTS — stacking scroll cards                                    */
-/* ------------------------------------------------------------------ */
+
 const projects = [
   {
     n: "01",
-    tag: "Flagship · Full Stack AI",
+    tag: "Healthcare · Custom AI",
     name: "NaturalHealer",
     subtitle: "Empowering wellness through nature",
     body: "A full-stack AI-powered wellness platform delivering personalized health guidance. Combines structured healthcare datasets with domain-specific knowledge and intelligent recommendation workflows to generate contextual, actionable insights for users.",
     tech: ["Python", "React", "Next.js", "Firebase", "LangFlow", "LLaMA"],
     accent: RED,
+    live: "https://natural-healer.vercel.app/",
   },
   {
     n: "02",
-    tag: "AI Validation Engine",
+    tag: "Intelligent Validation Engine",
     name: "ProtoEngine",
     subtitle: "Idea Evaluator & feasibility engine",
     body: "A full-stack AI-powered idea validation system that analyses user concepts, evaluates feasibility, and generates structured execution roadmaps using intelligent decision-making workflows and automated planning mechanisms.",
-    tech: ["React", "Python", "Supabase", "LangChain", "PHI-4", "Gemini LLM"],
-    accent: "#ffffff",
+    tech: ["React", "Python", "Supabase", "LangChain", "PHI-4"],
+    accent: RED,
+    live: "https://idea-evaluator-nine.vercel.app/",
   },
   {
     n: "03",
     tag: "Desktop · Fintech",
-    name: "Stock Market Intelligence",
-    subtitle: "Real-time equities analytics",
-    body: "Python + PyQt5 desktop app for real-time Indian market analysis. Fetches live and historical data, computes MA, RSI, MACD indicators, and visualises trends with interactive charts to help investors act on evidence, not intuition.",
-    tech: ["Python", "PyQt5", "Pandas", "NumPy", "PyQtGraph"],
+    name: "Financial Digital Twin",
+    subtitle: "Real-time Advisory system",
+    body: "AI powered personal finance platform that creates a Digital Financial Twin to simulate financial decisions before they happen. Uses spending behavior, financial goals, and predictive analytics to help users compare scenarios and make smarter, data driven financial decisions.",
+    tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     accent: RED,
+    live: "https://fin-twin-one.vercel.app/",
   },
 ];
 
@@ -1113,7 +1124,7 @@ function ProjectCard({
         </div>
         <div className="flex md:flex-col gap-3 md:items-end">
           <a
-            href={GITHUB_URL}
+            href={project.live}
             target="_blank"
             rel="noreferrer"
             className={`px-5 py-2 rounded-full text-sm font-semibold transition ${
