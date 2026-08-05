@@ -13,7 +13,7 @@ import { ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Abdullah Azmi — AI Engineer & Full Stack Developer" },
+      { title: "Abdullah Azmi" },
       {
         name: "description",
         content:
