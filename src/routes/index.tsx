@@ -1023,7 +1023,7 @@ const projects = [
     body: "A full-stack AI-powered wellness platform delivering personalized health guidance. Combines structured healthcare datasets with domain-specific knowledge and intelligent recommendation workflows to generate contextual, actionable insights for users.",
     tech: ["Python", "React", "Next.js", "Firebase", "LangFlow", "LLaMA"],
     accent: RED,
-    live: "https://natural-healer.vercel.app/",
+    // live: "https://natural-healer.vercel.app/",
   },
   {
     n: "02",
@@ -1033,7 +1033,7 @@ const projects = [
     body: "A full-stack AI-powered idea validation system that analyses user concepts, evaluates feasibility, and generates structured execution roadmaps using intelligent decision-making workflows and automated planning mechanisms.",
     tech: ["React", "Python", "Supabase", "LangChain", "PHI-4"],
     accent: RED,
-    live: "https://idea-evaluator-nine.vercel.app/",
+    // live: "https://idea-evaluator-nine.vercel.app/",
   },
   {
     n: "03",
@@ -1043,7 +1043,7 @@ const projects = [
     body: "AI powered personal finance platform that creates a Digital Financial Twin to simulate financial decisions before they happen. Uses spending behavior, financial goals, and predictive analytics to help users compare scenarios and make smarter, data driven financial decisions.",
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     accent: RED,
-    live: "https://fin-twin-one.vercel.app/",
+    live: "pass" // "https://fin-twin-one.vercel.app/",
   },
 ];
 
