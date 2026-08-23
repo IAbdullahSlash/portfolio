@@ -1186,7 +1186,7 @@ function ProjectCard({
                 : "bg-white text-black hover:bg-white/90"
             }`}
           >
-            Live Link →
+            Under Maintenance
           </a>
         </div>
       </motion.article>
