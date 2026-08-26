@@ -12,6 +12,8 @@ import hackvedaCertificate from "@/assets/hackveda/certificate.jpg";
 import hackvedaTeam from "@/assets/hackveda/team.jpg";
 import hackvedaWinner from "@/assets/hackveda/winner.jpg";
 import hackvedaWork from "@/assets/hackveda/work.jpg";
+import smartIndiaTeam from "@/assets/internal-sih/team-win.jfif";
+import gdgTeam from "@/assets/gdg/gdg-team.jpeg";
 import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -1204,25 +1206,25 @@ function ProjectCard({
 /* ------------------------------------------------------------------ */
 const achievements = [
   {
-    tag: "🏆 Winner",
+    tag: "Winner",
     title: "HackVeda National Hackathon",
     org: "ILM University · IBM × AWS",
     body: "Winner of the HackVeda National Level Hackathon organised in collaboration with IBM and AWS.",
   },
   {
-    tag: "🏆 Winner",
+    tag: "Winner",
     title: "Smart India Hackathon — Internal",
     org: "Integral University",
     body: "Winner of the Smart India Hackathon internal edition at Integral University.",
   },
   {
-    tag: "🚀 Lead",
+    tag: "Lead",
     title: "GDG On Campus — Operations Lead",
     org: "Integral University",
     body: "Operations & Logistics Lead for Google Developer Group on Campus, coordinating community events and workshops.",
   },
   {
-    tag: "📝 Published",
+    tag: "Published",
     title: "The Art of Prompting",
     org: "Department of Computer Science — Integral University",
     body: "Authored and published an article on prompt engineering in the department's annual magazine, exploring key techniques that drive impactful AI-driven workflows.",
@@ -1243,34 +1245,179 @@ const hackvedaPhotos = [
   { src: hackvedaCertificate, alt: "HackVeda winner certificate" },
 ];
 
-function Achievements() {
+const smartIndiaPhotos = [
+  { src: smartIndiaTeam, alt: "Smart India Hackathon internal winning team" },
+];
+
+const gdgPhotos = [
+  { src: gdgTeam, alt: "GDG On Campus operations team" },
+];
+
+type AchievementPhoto = { src: string; alt: string };
+
+function AchievementPhotoGallery({
+  achievement,
+  photos,
+}: {
+  achievement: (typeof achievements)[number];
+  photos: AchievementPhoto[];
+}) {
   const [activePhoto, setActivePhoto] = useState<number | null>(null);
-  const hackvedaAchievement = achievements[0];
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelScheduledClose = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const scheduleClose = () => {
+    cancelScheduledClose();
+    closeTimeoutRef.current = setTimeout(() => setActivePhoto(null), 250);
+  };
 
   const showPreviousPhoto = () => {
     setActivePhoto((current) =>
-      current === null
-        ? 0
-        : (current - 1 + hackvedaPhotos.length) % hackvedaPhotos.length,
+      current === null ? 0 : (current - 1 + photos.length) % photos.length,
     );
   };
 
   const showNextPhoto = () => {
     setActivePhoto((current) =>
-      current === null ? 0 : (current + 1) % hackvedaPhotos.length,
+      current === null ? 0 : (current + 1) % photos.length,
     );
   };
 
   return (
-    <section
-      className="relative py-32 px-6 bg-black border-t border-white/5"
-      onKeyDown={(event) => {
-        if (activePhoto === null) return;
-        if (event.key === "Escape") setActivePhoto(null);
-        if (event.key === "ArrowLeft") showPreviousPhoto();
-        if (event.key === "ArrowRight") showNextPhoto();
-      }}
-    >
+    <>
+      <div className="grid grid-cols-2 gap-2 -mx-2 -mt-2 mb-7">
+        {photos.map((photo, photoIndex) => (
+          <div
+            key={photo.src}
+            tabIndex={0}
+            role="button"
+            aria-label={`Open ${achievement.title} photo ${photoIndex + 1}`}
+            onMouseEnter={() => setActivePhoto(photoIndex)}
+            onFocus={() => setActivePhoto(photoIndex)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setActivePhoto(photoIndex);
+              }
+            }}
+            className={`group/photo relative cursor-zoom-in overflow-hidden rounded-xl border border-white/10 outline-none focus-visible:ring-2 focus-visible:ring-[#ff2a2a] ${
+              photos.length === 1 ? "col-span-2 aspect-[16/9]" : "aspect-[4/3]"
+            }`}
+          >
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              loading="lazy"
+              className="h-full w-full object-cover transition duration-500 group-hover/photo:scale-105"
+            />
+          </div>
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {activePhoto !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-10"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${achievement.title} photos`}
+            onMouseEnter={scheduleClose}
+            onMouseLeave={scheduleClose}
+            onClick={() => setActivePhoto(null)}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") setActivePhoto(null);
+              if (event.key === "ArrowLeft") showPreviousPhoto();
+              if (event.key === "ArrowRight") showNextPhoto();
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.94, y: 18 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.96, y: 12 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="relative w-full max-w-4xl rounded-3xl border border-white/15 bg-black p-3 shadow-2xl md:p-5"
+              onMouseEnter={cancelScheduledClose}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button
+                type="button"
+                aria-label={`Close ${achievement.title} photos`}
+                onClick={() => setActivePhoto(null)}
+                className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <div className="relative overflow-hidden rounded-2xl bg-white/[0.04]">
+                <img
+                  src={photos[activePhoto].src}
+                  alt={photos[activePhoto].alt}
+                  className="max-h-[62vh] min-h-[280px] w-full object-contain md:min-h-[420px]"
+                />
+                {photos.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Previous achievement photo"
+                      onClick={showPreviousPhoto}
+                      className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    >
+                      <ArrowLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Next achievement photo"
+                      onClick={showNextPhoto}
+                      className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    >
+                      <ArrowRight className="h-5 w-5" />
+                    </button>
+                  </>
+                )}
+              </div>
+              <div className="mt-4 border-t border-white/10 px-2 pb-2 pt-5 md:px-3">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="mb-4 flex items-center gap-3">
+                      <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
+                      <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
+                        {achievement.tag}
+                      </span>
+                    </div>
+                    <h3 className="max-w-2xl text-2xl font-black leading-[0.95] tracking-tight text-white md:text-4xl">
+                      {achievement.title}
+                    </h3>
+                    <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">
+                      {achievement.org}
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-white/50">
+                    {String(activePhoto + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
+                  </span>
+                </div>
+                <p className="mt-6 max-w-2xl border-l-2 border-[#ff2a2a] pl-4 text-sm leading-relaxed text-white">
+                  {achievement.body}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+function Achievements() {
+  return (
+    <section className="relative py-32 px-6 bg-black border-t border-white/5">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <motion.span
@@ -1302,37 +1449,22 @@ function Achievements() {
               className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-[#ff2a2a]/50 transition"
             >
               {i === 0 && (
-                <div className="grid grid-cols-2 gap-2 -mx-2 -mt-2 mb-7">
-                  {hackvedaPhotos.map((photo, photoIndex) => (
-                    <div
-                      key={photo.src}
-                      tabIndex={0}
-                      role="button"
-                      aria-label={`Open HackVeda photo ${photoIndex + 1}`}
-                      onMouseEnter={() => setActivePhoto(photoIndex)}
-                      onFocus={() => setActivePhoto(photoIndex)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          setActivePhoto(photoIndex);
-                        }
-                      }}
-                      className="group/photo relative aspect-[4/3] cursor-zoom-in overflow-hidden rounded-xl border border-white/10 outline-none focus-visible:ring-2 focus-visible:ring-[#ff2a2a]"
-                    >
-                      <img
-                        src={photo.src}
-                        alt={photo.alt}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-500 group-hover/photo:scale-105"
-                      />
-                    </div>
-                  ))}
-                </div>
+                <AchievementPhotoGallery
+                  achievement={a}
+                  photos={hackvedaPhotos}
+                />
               )}
-              <div
-                className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-6"
-                style={{ background: RED, color: "white" }}
-              >
+              {i === 1 && (
+                <AchievementPhotoGallery
+                  achievement={a}
+                  photos={smartIndiaPhotos}
+                />
+              )}
+              {i === 2 && (
+                <AchievementPhotoGallery achievement={a} photos={gdgPhotos} />
+              )}
+              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
+                <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
                 {a.tag}
               </div>
               <h3 className="text-xl font-black mb-2 leading-tight">
@@ -1344,111 +1476,6 @@ function Achievements() {
               <p className="text-sm text-white/70 leading-relaxed">{a.body}</p>
             </motion.div>
           ))}
-        </div>
-
-        <div>
-          <h3 className="text-xs uppercase tracking-[0.3em] text-white/50 mb-6">
-
-        <AnimatePresence>
-          {activePhoto !== null && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-10"
-              role="dialog"
-              aria-modal="true"
-              aria-label="HackVeda achievement photos"
-              onMouseLeave={() => setActivePhoto(null)}
-              onClick={() => setActivePhoto(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.94, y: 18 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.96, y: 12 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="relative w-full max-w-4xl rounded-3xl border border-white/15 bg-black p-3 shadow-2xl md:p-5"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <button
-                  type="button"
-                  aria-label="Close HackVeda photos"
-                  onClick={() => setActivePhoto(null)}
-                  className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-                <div className="relative overflow-hidden rounded-2xl bg-white/[0.04]">
-                  <img
-                    src={hackvedaPhotos[activePhoto].src}
-                    alt={hackvedaPhotos[activePhoto].alt}
-                    className="max-h-[62vh] min-h-[280px] w-full object-contain md:min-h-[420px]"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Previous HackVeda photo"
-                    onClick={showPreviousPhoto}
-                    className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Next HackVeda photo"
-                    onClick={showNextPhoto}
-                    className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  >
-                    <ArrowRight className="h-5 w-5" />
-                  </button>
-                </div>
-                <div className="mt-4 border-t border-white/10 px-2 pb-2 pt-5 md:px-3">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                      <div className="mb-4 flex items-center gap-3">
-                        <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
-                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
-                          {hackvedaAchievement.tag.replace("🏆 ", "")}
-                        </span>
-                      </div>
-                      <h3 className="max-w-2xl text-2xl font-black leading-[0.95] tracking-tight text-white md:text-4xl">
-                        {hackvedaAchievement.title}
-                      </h3>
-                      <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">
-                        {hackvedaAchievement.org}
-                      </p>
-                    </div>
-                    <span className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-white/50">
-                      {String(activePhoto + 1).padStart(2, "0")} / {String(hackvedaPhotos.length).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <p className="mt-6 max-w-2xl border-l-2 border-[#ff2a2a] pl-4 text-sm leading-relaxed text-white">
-                    {hackvedaAchievement.body}
-                  </p>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-            Certifications & Focus Areas
-          </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {certs.map((c, i) => (
-              <motion.div
-                key={c.title}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="p-5 rounded-2xl border border-white/10 bg-white/[0.02]"
-              >
-                <div className="w-8 h-8 rounded-full mb-4 flex items-center justify-center text-sm font-black" style={{ background: RED }}>
-                  ✓
-                </div>
-                <h4 className="font-bold text-sm mb-1">{c.title}</h4>
-                <p className="text-xs text-white/50">{c.org}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
