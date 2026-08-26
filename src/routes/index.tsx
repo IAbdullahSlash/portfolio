@@ -8,7 +8,11 @@ import {
   useSpring,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
-import { ArrowUpRight } from "lucide-react";
+import hackvedaCertificate from "@/assets/hackveda/certificate.jpg";
+import hackvedaTeam from "@/assets/hackveda/team.jpg";
+import hackvedaWinner from "@/assets/hackveda/winner.jpg";
+import hackvedaWork from "@/assets/hackveda/work.jpg";
+import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -1232,9 +1236,41 @@ const certs = [
   { title: "Data Science with Python", org: "Pandas · NumPy · Scikit-learn" },
 ];
 
+const hackvedaPhotos = [
+  { src: hackvedaTeam, alt: "HackVeda team outside the event venue" },
+  { src: hackvedaWinner, alt: "HackVeda winner certificate held outdoors" },
+  { src: hackvedaWork, alt: "Team working together during the HackVeda hackathon" },
+  { src: hackvedaCertificate, alt: "HackVeda winner certificate" },
+];
+
 function Achievements() {
+  const [activePhoto, setActivePhoto] = useState<number | null>(null);
+  const hackvedaAchievement = achievements[0];
+
+  const showPreviousPhoto = () => {
+    setActivePhoto((current) =>
+      current === null
+        ? 0
+        : (current - 1 + hackvedaPhotos.length) % hackvedaPhotos.length,
+    );
+  };
+
+  const showNextPhoto = () => {
+    setActivePhoto((current) =>
+      current === null ? 0 : (current + 1) % hackvedaPhotos.length,
+    );
+  };
+
   return (
-    <section className="relative py-32 px-6 bg-black border-t border-white/5">
+    <section
+      className="relative py-32 px-6 bg-black border-t border-white/5"
+      onKeyDown={(event) => {
+        if (activePhoto === null) return;
+        if (event.key === "Escape") setActivePhoto(null);
+        if (event.key === "ArrowLeft") showPreviousPhoto();
+        if (event.key === "ArrowRight") showNextPhoto();
+      }}
+    >
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <motion.span
@@ -1265,6 +1301,34 @@ function Achievements() {
               transition={{ duration: 0.6, delay: i * 0.1 }}
               className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-[#ff2a2a]/50 transition"
             >
+              {i === 0 && (
+                <div className="grid grid-cols-2 gap-2 -mx-2 -mt-2 mb-7">
+                  {hackvedaPhotos.map((photo, photoIndex) => (
+                    <div
+                      key={photo.src}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Open HackVeda photo ${photoIndex + 1}`}
+                      onMouseEnter={() => setActivePhoto(photoIndex)}
+                      onFocus={() => setActivePhoto(photoIndex)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setActivePhoto(photoIndex);
+                        }
+                      }}
+                      className="group/photo relative aspect-[4/3] cursor-zoom-in overflow-hidden rounded-xl border border-white/10 outline-none focus-visible:ring-2 focus-visible:ring-[#ff2a2a]"
+                    >
+                      <img
+                        src={photo.src}
+                        alt={photo.alt}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-500 group-hover/photo:scale-105"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
               <div
                 className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-6"
                 style={{ background: RED, color: "white" }}
@@ -1284,6 +1348,87 @@ function Achievements() {
 
         <div>
           <h3 className="text-xs uppercase tracking-[0.3em] text-white/50 mb-6">
+
+        <AnimatePresence>
+          {activePhoto !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-10"
+              role="dialog"
+              aria-modal="true"
+              aria-label="HackVeda achievement photos"
+              onMouseLeave={() => setActivePhoto(null)}
+              onClick={() => setActivePhoto(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.94, y: 18 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.96, y: 12 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="relative w-full max-w-4xl rounded-3xl border border-white/15 bg-black p-3 shadow-2xl md:p-5"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  aria-label="Close HackVeda photos"
+                  onClick={() => setActivePhoto(null)}
+                  className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+                <div className="relative overflow-hidden rounded-2xl bg-white/[0.04]">
+                  <img
+                    src={hackvedaPhotos[activePhoto].src}
+                    alt={hackvedaPhotos[activePhoto].alt}
+                    className="max-h-[62vh] min-h-[280px] w-full object-contain md:min-h-[420px]"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Previous HackVeda photo"
+                    onClick={showPreviousPhoto}
+                    className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next HackVeda photo"
+                    onClick={showNextPhoto}
+                    className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="mt-4 border-t border-white/10 px-2 pb-2 pt-5 md:px-3">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <div className="mb-4 flex items-center gap-3">
+                        <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
+                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
+                          {hackvedaAchievement.tag.replace("🏆 ", "")}
+                        </span>
+                      </div>
+                      <h3 className="max-w-2xl text-2xl font-black leading-[0.95] tracking-tight text-white md:text-4xl">
+                        {hackvedaAchievement.title}
+                      </h3>
+                      <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">
+                        {hackvedaAchievement.org}
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-white/50">
+                      {String(activePhoto + 1).padStart(2, "0")} / {String(hackvedaPhotos.length).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <p className="mt-6 max-w-2xl border-l-2 border-[#ff2a2a] pl-4 text-sm leading-relaxed text-white">
+                    {hackvedaAchievement.body}
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
             Certifications & Focus Areas
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
