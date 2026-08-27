@@ -1228,7 +1228,7 @@ const achievements = [
     tag: "Published",
     title: "The Art of Prompting",
     org: "Department of Computer Science — Integral University",
-    body: "Authored and published an article on prompt engineering in the department's annual magazine, exploring key techniques that drive impactful AI-driven workflows.",
+    body: "Authored and published an article on prompt engineering in the department's annual magazine \"To The Horizon\"."
   },
 ];
 
