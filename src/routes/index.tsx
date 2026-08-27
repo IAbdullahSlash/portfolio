@@ -14,6 +14,7 @@ import hackvedaWinner from "@/assets/hackveda/winner.jpg";
 import hackvedaWork from "@/assets/hackveda/work.jpg";
 import smartIndiaTeam from "@/assets/internal-sih/team-win.jfif";
 import gdgTeam from "@/assets/gdg/gdg-team.jpeg";
+import articleImage from "@/assets/article-publish/article.png";
 import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -1253,6 +1254,10 @@ const gdgPhotos = [
   { src: gdgTeam, alt: "GDG On Campus operations team" },
 ];
 
+const articlePhotos = [
+  { src: articleImage, alt: "The Art of Prompting article feature" },
+];
+
 type AchievementPhoto = { src: string; alt: string };
 
 function AchievementPhotoGallery({
@@ -1403,9 +1408,22 @@ function AchievementPhotoGallery({
                     {String(activePhoto + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
                   </span>
                 </div>
-                <p className="mt-6 max-w-2xl border-l-2 border-[#ff2a2a] pl-4 text-sm leading-relaxed text-white">
-                  {achievement.body}
-                </p>
+                <div className="mt-6 flex flex-wrap items-center gap-4">
+                  <p className="max-w-2xl border-l-2 border-[#ff2a2a] pl-4 text-sm leading-relaxed text-white">
+                    {achievement.body}
+                  </p>
+                  {achievement.tag === "Published" && (
+                    <a
+                      href="https://heyzine.com/flip-book/866962fcb7.html#page/29"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#ff2a2a] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#ff2a2a] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    >
+                      Show
+                      <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
+                    </a>
+                  )}
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -1463,6 +1481,9 @@ function Achievements() {
               {i === 2 && (
                 <AchievementPhotoGallery achievement={a} photos={gdgPhotos} />
               )}
+              {i === 3 && (
+                <AchievementPhotoGallery achievement={a} photos={articlePhotos} />
+              )}
               <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
                 <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
                 {a.tag}
@@ -1473,7 +1494,20 @@ function Achievements() {
               <p className="text-xs uppercase tracking-widest text-white/50 mb-3">
                 {a.org}
               </p>
-              <p className="text-sm text-white/70 leading-relaxed">{a.body}</p>
+              <div className="flex flex-wrap items-center gap-4">
+                <p className="text-sm text-white/70 leading-relaxed">{a.body}</p>
+                {i === 3 && (
+                  <a
+                    href="https://heyzine.com/flip-book/866962fcb7.html#page/29"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#ff2a2a] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#ff2a2a] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  >
+                    Show
+                    <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
+                  </a>
+                )}
+              </div>
             </motion.div>
           ))}
         </div>
