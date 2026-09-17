@@ -43,17 +43,14 @@ const GITHUB_URL = "https://github.com/IAbdullahSlash";
 const LINKEDIN_URL = "https://www.linkedin.com/in/abdullahslash";
 const EMAIL = "abdullahaz7677@gmail.com";
 const PHONE = "+91 8756857677";
-// Opens Gmail's web compose window directly (instead of relying on the
-// visitor's OS-level default mail app), with Abdullah's address pre-filled
-// as the recipient.
+// Opens Gmail's web compose window directly (bypasses OS mail app).
 const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
   EMAIL
 )}&su=${encodeURIComponent("Hiring Inquiry – Portfolio")}&body=${encodeURIComponent(
   "Hello Abdullah,\n\nI came across your portfolio and would like to discuss an opportunity with you.\n\nLooking forward to hearing from you.\nBest Regards,"
 )}`;
-// wa.me deep-link: opens WhatsApp (app on mobile, WhatsApp Web on desktop)
-// with a chat to this number pre-opened and a starter message ready to send.
-const WHATSAPP_NUMBER = PHONE.replace(/[^\d]/g, ""); // "918756857677"
+// wa.me deep-link — opens WhatsApp (app or Web) with pre-filled message.
+const WHATSAPP_NUMBER = PHONE.replace(/[^\d]/g, "");
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
   "Hi Abdullah, I came across your portfolio and would like to connect!"
 )}`;
@@ -61,7 +58,6 @@ const PROFILE_PIC =
   "https://cdn.phototourl.com/free/2026-07-21-abb6ec45-d13e-42a4-b41f-ad3f2db01d3f.jpg";
 
 const RED = "#ff2a2a";
-
 
 function Portfolio() {
   const [introDone, setIntroDone] = useState(false);
@@ -318,7 +314,7 @@ function Hero() {
 }
 
 /* ------------------------------------------------------------------ */
-/* ABOUT — sticky text + parallax portrait                             */
+/* ABOUT                                                             */
 /* ------------------------------------------------------------------ */
 function About() {
   const ref = useRef<HTMLDivElement>(null);
@@ -449,7 +445,7 @@ function About() {
 }
 
 /* ------------------------------------------------------------------ */
-/* TECH MARQUEE — infinite horizontal scroll                           */
+/* TECH MARQUEE                                                      */
 /* ------------------------------------------------------------------ */
 const marqueeTech = [
   "Python", "TypeScript", "JavaScript", "SQL", "React", "Next.js", "Node.js",
@@ -478,7 +474,7 @@ function TechMarquee() {
 }
 
 /* ------------------------------------------------------------------ */
-/* SKILLS — bento-grid competency map                                  */
+/* SKILLS                                                            */
 /* ------------------------------------------------------------------ */
 const skillGroups: {
   title: string;
@@ -648,7 +644,7 @@ function Skills() {
 }
 
 /* ------------------------------------------------------------------ */
-/* PROCESS — "Here's how I turn ideas into real-world applications"    */
+/* PROCESS                                                             */
 /* ------------------------------------------------------------------ */
 const processSteps = [
   {
@@ -673,16 +669,14 @@ const processSteps = [
   },
 ];
 
-
 const cardPositions = [
-  { top: "11.8%", left: "67.3%", rotate: 5 },   // 01 Research  — SVG (69, 13)
-  { top: "35.8%", left: "12%",   rotate: -5 },   // 02 Design    — SVG (22, 37)
-  { top: "59.8%", left: "67.3%", rotate: 4 },    // 03 Develop   — SVG (69, 61)
-  { top: "83.8%", left: "12%",   rotate: -3 },   // 04 Deploy    — SVG (22, 85)
+  { top: "11.8%", left: "67.3%", rotate: 5 },
+  { top: "35.8%", left: "12%",   rotate: -5 },
+  { top: "59.8%", left: "67.3%", rotate: 4 },
+  { top: "83.8%", left: "12%",   rotate: -3 },
 ];
 
-// Card centers in a 85x100 viewBox (matches container aspect ratio ~1152/1350).
-// Point 1: (69, 13) | Point 2: (22, 37) | Point 3: (69, 61) | Point 4: (22, 85)
+// Card centers in 85×100 viewBox (matches 1152/1350 aspect ratio).
 const CURVE_D =
   "M 69 13 L 22 37 L 69 61 L 22 85";
 
@@ -851,7 +845,8 @@ function ProcessCard({
   );
 }
 
-/* EXPERIENCE — vertical timeline with scroll-linked progress line     */
+/* ------------------------------------------------------------------ */
+/* EXPERIENCE                                                          */
 /* ------------------------------------------------------------------ */
 const experiences = [
   {
@@ -1020,7 +1015,7 @@ function Experience() {
   );
 }
 
-/* PROJECTS — stacking scroll cards                                    */
+/* PROJECTS                                                            */
 
 const projects = [
   {
@@ -1031,7 +1026,6 @@ const projects = [
     body: "A full-stack AI-powered wellness platform delivering personalized health guidance. Combines structured healthcare datasets with domain-specific knowledge and intelligent recommendation workflows to generate contextual, actionable insights for users.",
     tech: ["Python", "React", "Next.js", "Firebase", "LangFlow", "LLaMA"],
     accent: RED,
-    // live: "https://natural-healer.vercel.app/",
   },
   {
     n: "02",
@@ -1041,7 +1035,6 @@ const projects = [
     body: "A full-stack AI-powered idea validation system that analyses user concepts, evaluates feasibility, and generates structured execution roadmaps using intelligent decision-making workflows and automated planning mechanisms.",
     tech: ["React", "Python", "Supabase", "LangChain", "PHI-4"],
     accent: RED,
-    // live: "https://idea-evaluator-nine.vercel.app/",
   },
   {
     n: "03",
@@ -1051,7 +1044,7 @@ const projects = [
     body: "AI powered personal finance platform that creates a Digital Financial Twin to simulate financial decisions before they happen. Uses spending behavior, financial goals, and predictive analytics to help users compare scenarios and make smarter, data driven financial decisions.",
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     accent: RED,
-    live: "pass" // "https://fin-twin-one.vercel.app/",
+    live: "pass",
   },
 ];
 
@@ -1204,7 +1197,7 @@ function ProjectCard({
 
 
 /* ------------------------------------------------------------------ */
-/* ACHIEVEMENTS + CERTIFICATIONS                                       */
+/* ACHIEVEMENTS                                                        */
 /* ------------------------------------------------------------------ */
 const achievements = [
   {
@@ -1525,7 +1518,7 @@ const certifications = [
     tag: "Certified",
     title: "GitHub Foundations Certificate",
     org: "GitHub · Microsoft Learn",
-    body: "Validates core Git and GitHub skills — version control, collaboration workflows, and CI/CD fundamentals. Essential for any developer working in team environments, contributing to open source, or shipping production code with confidence.",
+    body: "A certification that validates my Git and GitHub fundamentals, including version control, collaboration, and CI/CD workflows. Basically, the skills behind how I build, collaborate, and ship code.",
     link: "https://learn.microsoft.com/en-us/users/abdullah-1952/credentials/b636c337abd0aeec",
   },
 ];
@@ -1661,7 +1654,7 @@ function Education() {
 }
 
 /* ------------------------------------------------------------------ */
-/* CONTACT — huge scroll-in headline                                   */
+/* CONTACT                                                             */
 /* ------------------------------------------------------------------ */
 function Contact() {
   const ref = useRef<HTMLDivElement>(null);
