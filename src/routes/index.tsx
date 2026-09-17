@@ -1681,7 +1681,7 @@ function Contact() {
         <h2 className="text-6xl md:text-9xl font-black tracking-tight leading-[0.9]">
           Say
           <br />
-          <span style={{ color: RED }}>hello.</span>
+          <span style={{ color: RED }}>مَرْحَبًا Hello नमस्ते</span>
         </h2>
         <p className="mt-10 text-white/70 max-w-xl mx-auto text-lg">
           Open to internships, freelance builds, and full-time roles in AI &
