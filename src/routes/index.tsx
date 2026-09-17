@@ -83,6 +83,7 @@ function Portfolio() {
       <Experience />
       <Projects />
       <Achievements />
+      <Certifications />
       <Education />
       <Contact />
       <Footer />
@@ -1508,6 +1509,82 @@ function Achievements() {
                   </a>
                 )}
               </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* CERTIFICATIONS — verified credentials                              */
+/* ------------------------------------------------------------------ */
+const certifications = [
+  {
+    tag: "Certified",
+    title: "GitHub Foundations Certificate",
+    org: "GitHub · Microsoft Learn",
+    body: "Validates core Git and GitHub skills — version control, collaboration workflows, and CI/CD fundamentals. Essential for any developer working in team environments, contributing to open source, or shipping production code with confidence.",
+    link: "https://learn.microsoft.com/en-us/users/abdullah-1952/credentials/b636c337abd0aeec",
+  },
+];
+
+function Certifications() {
+  return (
+    <section className="relative py-32 px-6 bg-black border-t border-white/5">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6"
+          >
+            Certificates
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
+          >
+            Verified <span style={{ color: RED }}>credentials</span>
+          </motion.h2>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {certifications.map((c, i) => (
+            <motion.div
+              key={c.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-[#ff2a2a]/50 transition"
+            >
+              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
+                <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
+                {c.tag}
+              </div>
+              <h3 className="text-xl font-black mb-2 leading-tight">
+                {c.title}
+              </h3>
+              <p className="text-xs uppercase tracking-widest text-white/50 mb-3">
+                {c.org}
+              </p>
+              <p className="mt-4 text-sm text-white/70 leading-relaxed">
+                {c.body}
+              </p>
+              <a
+                href={c.link}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-flex shrink-0 items-center gap-2 rounded-full border border-[#ff2a2a] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#ff2a2a] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                Show
+                <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
+              </a>
             </motion.div>
           ))}
         </div>
