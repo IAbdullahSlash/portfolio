@@ -7,10 +7,42 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import tabIcon from "@/assets/tab.png";
+
+function CustomCursor() {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
+  const [clicking, setClicking] = useState(false);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
+    const onDown = () => setClicking(true);
+    const onUp = () => setClicking(false);
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
+
+  return (
+    <div
+      className={`custom-cursor${clicking ? " is-clicking" : ""}`}
+      style={{
+        left: pos.x,
+        top: pos.y,
+        opacity: pos.x < 0 ? 0 : 1,
+      }}
+      aria-hidden="true"
+    />
+  );
+}
 
 function NotFoundComponent() {
   return (
@@ -119,6 +151,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <CustomCursor />
     </QueryClientProvider>
   );
 }

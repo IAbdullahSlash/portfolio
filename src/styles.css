@@ -140,5 +140,40 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    cursor: none;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  [contenteditable],
+  .custom-cursor-clickable {
+    cursor: pointer !important;
+  }
+}
+
+@layer utilities {
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    z-index: 99999;
+    background: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.15s ease, height 0.15s ease, background 0.15s ease;
+    mix-blend-mode: difference;
+  }
+
+  .custom-cursor.is-clicking {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 0, 0, 0.6);
   }
 }
