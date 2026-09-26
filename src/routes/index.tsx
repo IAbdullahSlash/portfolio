@@ -128,9 +128,9 @@ function Intro() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className="text-5xl md:text-7xl font-black tracking-tight text-[var(--pf-text-on-accent)]"
+        className="text-5xl md:text-7xl font-black tracking-tight text-white"
       >
-        Abdullah Azmi<span className="text-[var(--pf-bg)]">.</span>
+        Abdullah Azmi<span className="text-black">.</span>
       </motion.h1>
     </motion.div>
   );
@@ -378,7 +378,7 @@ function About() {
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-start">
         <motion.div style={{ y: yImg, rotate }} className="md:sticky md:top-32">
-          <div className="w-full h-[70vh] lg:h-[85vh] mx-auto rounded-3xl bg-[var(--pf-glass-bg)] border-2 border-[var(--pf-glass-border-strong)] overflow-hidden shadow-2xl">
+          <div className="w-full h-[70vh] lg:h-[85vh] mx-auto rounded-3xl bg-white/85 border-2 border-black/20 overflow-hidden shadow-2xl">
             <img
               src={PROFILE_PIC}
               alt="Abdullah Azmi"
@@ -390,7 +390,7 @@ function About() {
               href={LINKEDIN_URL}
               target="_blank"
               rel="noreferrer"
-              className="w-11 h-11 rounded-full bg-[var(--pf-glass-bg)] border border-[var(--pf-glass-border-strong)] flex items-center justify-center hover:bg-[var(--pf-glass-bg)] transition"
+              className="w-11 h-11 rounded-full bg-white/85 border border-black/20 flex items-center justify-center hover:bg-white/85 transition"
             >
               <LinkedInIcon className="w-4 h-4" />
             </a>
@@ -398,7 +398,7 @@ function About() {
               href={GITHUB_URL}
               target="_blank"
               rel="noreferrer"
-              className="w-11 h-11 rounded-full bg-[var(--pf-glass-bg)] border border-[var(--pf-glass-border-strong)] flex items-center justify-center hover:bg-[var(--pf-glass-bg)] transition"
+              className="w-11 h-11 rounded-full bg-white/85 border border-black/20 flex items-center justify-center hover:bg-white/85 transition"
             >
               <GithubIcon className="w-4 h-4" />
             </a>
@@ -411,7 +411,7 @@ function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-xs tracking-[0.3em] uppercase text-[var(--pf-text-on-accent-muted)] mb-4"
+            className="text-xs tracking-[0.3em] uppercase text-white/65 mb-4"
           >
             About Me
           </motion.p>
@@ -420,29 +420,29 @@ function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-5xl md:text-7xl font-black tracking-tight text-[var(--pf-text-on-accent)] mb-8 leading-[0.95]"
+            className="text-5xl md:text-7xl font-black tracking-tight text-white mb-8 leading-[0.95]"
           >
             Engineer.
             <br />
             Builder.
             <br />
-            <span className="text-[var(--pf-fg)]">Problem-solver.</span>
+            <span className="text-black">Problem-solver.</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="mt-6 text-lg md:text-xl text-[var(--pf-text-on-accent-soft)] leading-relaxed"
+            className="mt-6 text-lg md:text-xl text-white/95 leading-relaxed"
           >
-            As an <span className="font-black text-[var(--pf-fg)]">AI Engineer & Software developer </span> I work under Artificial Intelligence, software engineering, and applied research. I have experience in developing scalable, data driven, and machine learning algorithem applications. I enjoy experimenting with new technologies, and finding smarter ways to solve complex challenges.
+            As an <span className="font-black text-black">AI Engineer & Software developer </span> I work under Artificial Intelligence, software engineering, and applied research. I have experience in developing scalable, data driven, and machine learning algorithem applications. I enjoy experimenting with new technologies, and finding smarter ways to solve complex challenges.
           </motion.p>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="mt-6 text-xl md:text-2xl font-black text-[var(--pf-text-on-accent)]"
+            className="mt-6 text-xl md:text-2xl font-black text-white"
           >
             Always learning, always building, always shipping.
           </motion.p>
@@ -461,12 +461,12 @@ function About() {
             ].map((s) => (
               <div
                 key={s.v}
-                className="p-4 rounded-2xl bg-[var(--pf-glass-bg-solid)] border border-[var(--pf-glass-border-strong)] text-center"
+                className="p-4 rounded-2xl bg-white/98 border border-black/20 text-center"
               >
-                <div className="text-3xl md:text-4xl font-black text-[var(--pf-fg)]">
+                <div className="text-3xl md:text-4xl font-black text-black">
                   {s.k}
                 </div>
-                <div className="text-[10px] uppercase tracking-widest text-[var(--pf-fg-subtle)] mt-1">
+                <div className="text-[10px] uppercase tracking-widest text-black/60 mt-1">
                   {s.v}
                 </div>
               </div>
