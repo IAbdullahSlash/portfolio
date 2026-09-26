@@ -29,8 +29,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Abdullah Azmi — AI Engineer & Full Stack Developer" },
       {
         property: "og:description",
-        content:
-          "AI Engineer & Full Stack Developer. Projects, skills, experience, and contact.",
+        content: "AI Engineer & Full Stack Developer. Projects, skills, experience, and contact.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -43,13 +42,11 @@ const GITHUB_URL = "https://github.com/IAbdullahSlash";
 const LINKEDIN_URL = "https://www.linkedin.com/in/abdullahslash";
 const EMAIL = "abdullahaz7677@gmail.com";
 const PHONE = "+91 8756857677";
-// Opens Gmail's web compose window directly (bypasses OS mail app).
 const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
   EMAIL
 )}&su=${encodeURIComponent("Hiring Inquiry – Portfolio")}&body=${encodeURIComponent(
   "Hello Abdullah,\n\nI came across your portfolio and would like to discuss an opportunity with you.\n\nLooking forward to hearing from you.\nBest Regards,"
 )}`;
-// wa.me deep-link — opens WhatsApp (app or Web) with pre-filled message.
 const WHATSAPP_NUMBER = PHONE.replace(/[^\d]/g, "");
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
   "Hi Abdullah, I came across your portfolio and would like to connect!"
@@ -61,16 +58,37 @@ const RED = "#ff2a2a";
 
 function Portfolio() {
   const [introDone, setIntroDone] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
   useEffect(() => {
     const t = setTimeout(() => setIntroDone(true), 2000);
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("portfolio-theme") as "dark" | "light" | null;
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("portfolio-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
   return (
-    <div className="relative min-h-screen bg-black text-white antialiased font-sans selection:bg-[#ff2a2a] selection:text-white overflow-x-hidden">
+    <div
+      data-theme={theme}
+      className="relative min-h-screen bg-[var(--pf-bg)] text-[var(--pf-fg)] antialiased font-sans selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)] overflow-x-hidden"
+    >
       <ScrollProgressBar />
       <AnimatePresence>{!introDone && <Intro />}</AnimatePresence>
-      <Nav />
+      <Nav theme={theme} onToggleTheme={toggleTheme} />
       <Hero />
       <About />
       <TechMarquee />
@@ -92,7 +110,7 @@ function ScrollProgressBar() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
   return (
     <motion.div
-      style={{ scaleX, background: RED, transformOrigin: "0% 50%" }}
+      style={{ scaleX, background: "var(--pf-accent)", transformOrigin: "0% 50%" }}
       className="fixed top-0 left-0 right-0 h-[3px] z-[90]"
     />
   );
@@ -104,15 +122,15 @@ function Intro() {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
       className="fixed inset-0 z-[100] flex items-center justify-center"
-      style={{ background: RED }}
+      style={{ background: "var(--pf-accent)" }}
     >
       <motion.h1
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className="text-5xl md:text-7xl font-black tracking-tight text-white"
+        className="text-5xl md:text-7xl font-black tracking-tight text-[var(--pf-text-on-accent)]"
       >
-        Abdullah Azmi<span className="text-black">.</span>
+        Abdullah Azmi<span className="text-[var(--pf-bg)]">.</span>
       </motion.h1>
     </motion.div>
   );
@@ -160,14 +178,38 @@ function WhatsAppIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-function Nav() {
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function Nav({ theme, onToggleTheme }: { theme: string; onToggleTheme: () => void }) {
   return (
     <header className="fixed top-4 inset-x-0 z-50 px-4">
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
-        <a href="#top" className="text-lg font-black tracking-tight shrink-0">
-          Abdullah Azmi<span style={{ color: RED }}>.</span>
+      <div className="max-w-5xl mx-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-glass-bg)] backdrop-blur-xl shadow-[0_8px_30px_var(--pf-shadow)]">
+        <a href="#top" className="text-lg font-black tracking-tight shrink-0 text-[var(--pf-fg)]">
+          Abdullah Azmi<span style={{ color: "var(--pf-accent)" }}>.</span>
         </a>
-        <nav className="hidden md:flex items-center gap-8 text-sm text-white/80">
+        <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--pf-fg-muted)]">
           {[
             ["Home", "#top"],
             ["About", "#about"],
@@ -176,11 +218,19 @@ function Nav() {
             ["Projects", "#projects"],
             ["Contact", "#contact"],
           ].map(([label, href]) => (
-            <a key={label} href={href} className="hover:text-white transition">
+            <a key={label} href={href} className="hover:text-[var(--pf-fg)] transition">
               {label}
             </a>
           ))}
         </nav>
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+          className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] text-[var(--pf-fg-muted)] hover:text-[var(--pf-fg)] hover:bg-[var(--pf-card-border)] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-accent)]"
+        >
+          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+        </button>
       </div>
     </header>
   );
@@ -219,13 +269,13 @@ function Hero() {
           >
             Hi, I'm Abdullah Azmi,
             <br />
-            <span style={{ color: RED }}>AI Engineer</span> & Full Stack Developer
+            <span style={{ color: "var(--pf-accent)" }}>AI Engineer</span> & Full Stack Developer
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.5, duration: 0.6 }}
-            className="mt-6 max-w-xl text-base md:text-lg text-white/80"
+            className="mt-6 max-w-xl text-base md:text-lg text-[var(--pf-fg-muted)]"
           >
             I build intelligent, scalable applications blending AI, modern web
             frameworks, and clean full-stack architecture.
@@ -238,13 +288,13 @@ function Hero() {
           >
             <a
               href="#projects"
-              className="px-6 py-3 rounded-full bg-white text-black text-sm font-semibold hover:bg-white/90 transition"
+              className="px-6 py-3 rounded-full bg-[var(--pf-fg)] text-[var(--pf-bg)] text-sm font-semibold hover:opacity-90 transition"
             >
               View My Work
             </a>
             <a
               href="#contact"
-              className="px-6 py-3 rounded-full border border-white/30 text-sm font-semibold hover:bg-white hover:text-black transition"
+              className="px-6 py-3 rounded-full border border-[var(--pf-glass-border-strong)] text-sm font-semibold hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
             >
               Contact Me
             </a>
@@ -255,7 +305,7 @@ function Hero() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 2.3, duration: 0.8 }}
-          className="relative w-full h-[70vh] lg:h-[85vh] rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
+          className="relative w-full h-[70vh] lg:h-[85vh] rounded-3xl overflow-hidden border border-[var(--pf-card-border)] shadow-[0_15px_40px_var(--pf-shadow-xl)]"
         >
           <video
             ref={videoRef}
@@ -272,38 +322,22 @@ function Hero() {
             aria-label={playing ? "Mute reel" : "Play reel with sound"}
             className="absolute bottom-5 right-5 flex flex-col items-center gap-1.5 group"
           >
-            <span className="w-14 h-14 rounded-full bg-white/95 text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <span className="w-14 h-14 rounded-full bg-[var(--pf-glass-bg-solid)] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition">
               {playing ? (
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                   <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" />
                   <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
                   <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
                 </svg>
               ) : (
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                   <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" />
                   <line x1="23" y1="9" x2="17" y2="15" />
                   <line x1="17" y1="9" x2="23" y2="15" />
                 </svg>
               )}
             </span>
-            <span className="text-[10px] tracking-[0.2em] text-white/80 uppercase">
+            <span className="text-[10px] tracking-[0.2em] text-[var(--pf-fg-dim)] uppercase">
               {playing ? "" : ""}
             </span>
           </button>
@@ -331,20 +365,20 @@ function About() {
       id="about"
       ref={ref}
       className="relative py-32 md:py-40 px-6 overflow-hidden"
-      style={{ background: RED }}
+      style={{ background: "var(--pf-accent)" }}
     >
       <motion.div
         aria-hidden
         style={{ y: yBg }}
         className="absolute inset-0 pointer-events-none opacity-20"
       >
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-black blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-white blur-3xl" />
+        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-black/20 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-white/20 blur-3xl" />
       </motion.div>
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-start">
         <motion.div style={{ y: yImg, rotate }} className="md:sticky md:top-32">
-          <div className="w-full h-[70vh] lg:h-[85vh] mx-auto rounded-3xl bg-black/40 border-2 border-white/30 overflow-hidden shadow-2xl">
+          <div className="w-full h-[70vh] lg:h-[85vh] mx-auto rounded-3xl bg-[var(--pf-glass-bg)] border-2 border-[var(--pf-glass-border-strong)] overflow-hidden shadow-2xl">
             <img
               src={PROFILE_PIC}
               alt="Abdullah Azmi"
@@ -356,7 +390,7 @@ function About() {
               href={LINKEDIN_URL}
               target="_blank"
               rel="noreferrer"
-              className="w-11 h-11 rounded-full bg-black/40 border border-white/30 flex items-center justify-center hover:bg-black transition"
+              className="w-11 h-11 rounded-full bg-[var(--pf-glass-bg)] border border-[var(--pf-glass-border-strong)] flex items-center justify-center hover:bg-[var(--pf-glass-bg)] transition"
             >
               <LinkedInIcon className="w-4 h-4" />
             </a>
@@ -364,7 +398,7 @@ function About() {
               href={GITHUB_URL}
               target="_blank"
               rel="noreferrer"
-              className="w-11 h-11 rounded-full bg-black/40 border border-white/30 flex items-center justify-center hover:bg-black transition"
+              className="w-11 h-11 rounded-full bg-[var(--pf-glass-bg)] border border-[var(--pf-glass-border-strong)] flex items-center justify-center hover:bg-[var(--pf-glass-bg)] transition"
             >
               <GithubIcon className="w-4 h-4" />
             </a>
@@ -377,7 +411,7 @@ function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-xs tracking-[0.3em] uppercase text-black/80 mb-4"
+            className="text-xs tracking-[0.3em] uppercase text-[var(--pf-text-on-accent-muted)] mb-4"
           >
             About Me
           </motion.p>
@@ -386,29 +420,29 @@ function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-5xl md:text-7xl font-black tracking-tight text-white mb-8 leading-[0.95]"
+            className="text-5xl md:text-7xl font-black tracking-tight text-[var(--pf-text-on-accent)] mb-8 leading-[0.95]"
           >
             Engineer.
             <br />
             Builder.
             <br />
-            <span className="text-black">Problem-solver.</span>
+            <span className="text-[var(--pf-fg)]">Problem-solver.</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-lg md:text-xl text-white/95 leading-relaxed"
+            className="mt-6 text-lg md:text-xl text-[var(--pf-text-on-accent-soft)] leading-relaxed"
           >
-            As an <span className="font-black text-black">AI Engineer & Software developer </span> I work under Artificial Intelligence, software engineering, and applied research. I have experience in developing scalable, data driven, and machine learning algorithem applications. I enjoy experimenting with new technologies, and finding smarter ways to solve complex challenges.
+            As an <span className="font-black text-[var(--pf-fg)]">AI Engineer & Software developer </span> I work under Artificial Intelligence, software engineering, and applied research. I have experience in developing scalable, data driven, and machine learning algorithem applications. I enjoy experimenting with new technologies, and finding smarter ways to solve complex challenges.
           </motion.p>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="mt-6 text-xl md:text-2xl font-black text-white"
+            className="mt-6 text-xl md:text-2xl font-black text-[var(--pf-text-on-accent)]"
           >
             Always learning, always building, always shipping.
           </motion.p>
@@ -427,12 +461,12 @@ function About() {
             ].map((s) => (
               <div
                 key={s.v}
-                className="p-4 rounded-2xl bg-black/40 border border-white/20 text-center"
+                className="p-4 rounded-2xl bg-[var(--pf-glass-bg-solid)] border border-[var(--pf-glass-border-strong)] text-center"
               >
-                <div className="text-3xl md:text-4xl font-black text-white">
+                <div className="text-3xl md:text-4xl font-black text-[var(--pf-fg)]">
                   {s.k}
                 </div>
-                <div className="text-[10px] uppercase tracking-widest text-white/80 mt-1">
+                <div className="text-[10px] uppercase tracking-widest text-[var(--pf-fg-subtle)] mt-1">
                   {s.v}
                 </div>
               </div>
@@ -456,7 +490,7 @@ const marqueeTech = [
 
 function TechMarquee() {
   return (
-    <section className="relative py-16 bg-black border-y border-white/5 overflow-hidden">
+    <section className="relative py-16 bg-[var(--pf-bg)] border-y border-[var(--pf-line)] overflow-hidden">
       <motion.div
         animate={{ x: ["0%", "-50%"] }}
         transition={{ duration: 40, ease: "linear", repeat: Infinity }}
@@ -464,8 +498,8 @@ function TechMarquee() {
       >
         {[...marqueeTech, ...marqueeTech].map((t, i) => (
           <span key={i} className="flex items-center gap-12">
-            <span className="text-white/20 hover:text-white transition">{t}</span>
-            <span style={{ color: RED }}>✦</span>
+            <span className="text-[var(--pf-fg-dim)] hover:text-[var(--pf-fg)] transition">{t}</span>
+            <span style={{ color: "var(--pf-accent)" }}>✦</span>
           </span>
         ))}
       </motion.div>
@@ -476,11 +510,7 @@ function TechMarquee() {
 /* ------------------------------------------------------------------ */
 /* SKILLS                                                            */
 /* ------------------------------------------------------------------ */
-const skillGroups: {
-  title: string;
-  subtitle: string;
-  items: { name: string; pct: number }[];
-}[] = [
+const skillGroups = [
   {
     title: "AI / ML",
     subtitle: "Core expertise",
@@ -549,9 +579,9 @@ function SkillChip({ name, i }: { name: string; i: number }) {
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.35, delay: i * 0.03 }}
       whileHover={{ scale: 1.06, y: -2 }}
-      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border bg-[#ff2a2a]/15 border-[#ff2a2a]/50 text-white text-sm font-medium whitespace-nowrap transition-colors"
+      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[var(--pf-accent-border)] bg-[var(--pf-accent-soft)] text-[var(--pf-fg)] text-sm font-medium whitespace-nowrap transition-colors"
     >
-      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: RED }} />
+      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--pf-accent)" }} />
       {name}
     </motion.span>
   );
@@ -570,12 +600,12 @@ function SkillCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6, delay: index * 0.08 }}
-      className="relative rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 overflow-hidden group hover:border-[#ff2a2a]/40 transition break-inside-avoid mb-6"
+      className="relative rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] p-6 md:p-8 overflow-hidden group hover:border-[var(--pf-accent-border)] transition break-inside-avoid mb-6"
     >
       <div
         aria-hidden
         className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-10 blur-3xl group-hover:opacity-20 transition"
-        style={{ background: RED }}
+        style={{ background: "var(--pf-accent)" }}
       />
 
       <div className="relative">
@@ -583,14 +613,14 @@ function SkillCard({
           <div>
             <span
               className="inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-black mb-3"
-              style={{ background: RED, color: "white" }}
+              style={{ background: "var(--pf-accent)", color: "var(--pf-text-on-accent)" }}
             >
               {String(index + 1).padStart(2, "0")}
             </span>
             <h3 className="text-2xl md:text-3xl font-black tracking-tight">
               {group.title}
             </h3>
-            <p className="text-xs uppercase tracking-[0.2em] text-white/50 mt-1">
+            <p className="text-xs uppercase tracking-[0.2em] text-[var(--pf-fg-dim)] mt-1">
               {group.subtitle}
             </p>
           </div>
@@ -608,14 +638,14 @@ function SkillCard({
 
 function Skills() {
   return (
-    <section id="skills" className="relative py-32 px-6 bg-black">
+    <section id="skills" className="relative py-32 px-6 bg-[var(--pf-bg)]">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16 max-w-3xl">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
           >
             Skills
           </motion.span>
@@ -625,9 +655,9 @@ function Skills() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            My <span style={{ color: RED }}>technical</span> arsenal
+            My <span style={{ color: "var(--pf-accent)" }}>technical</span> arsenal
           </motion.h2>
-          <p className="mt-6 text-white/60 text-lg">
+          <p className="mt-6 text-[var(--pf-fg-subtle)] text-lg">
             A competency map of the languages, frameworks, and platforms I use to
             Excel at my work as an Engineer.
           </p>
@@ -676,9 +706,7 @@ const cardPositions = [
   { top: "83.8%", left: "12%",   rotate: -3 },
 ];
 
-// Card centers in 85×100 viewBox (matches 1152/1350 aspect ratio).
-const CURVE_D =
-  "M 69 13 L 22 37 L 69 61 L 22 85";
+const CURVE_D = "M 69 13 L 22 37 L 69 61 L 22 85";
 
 function Process() {
   const ref = useRef<HTMLDivElement>(null);
@@ -691,15 +719,14 @@ function Process() {
   return (
     <section
       id="process"
-      className="relative bg-black text-white py-28 md:py-36 px-6 overflow-hidden border-t border-white/5"
+      className="relative bg-[var(--pf-bg)] text-[var(--pf-fg)] py-28 md:py-36 px-6 overflow-hidden border-t border-[var(--pf-line)]"
       style={{
         backgroundImage:
-          "linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)",
+          "linear-gradient(to right, var(--pf-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--pf-grid) 1px, transparent 1px)",
         backgroundSize: "80px 80px",
       }}
     >
       <div ref={ref} className="max-w-6xl mx-auto relative md:h-[1350px]">
-        {/* Heading block */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -707,36 +734,33 @@ function Process() {
           transition={{ duration: 0.7 }}
           className="md:absolute top-10 left-0 md:w-[460px] z-20 mb-16 md:mb-0"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6">
             Process
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight">
-            Here's how I turn ideas into <span style={{ color: RED }}>real-world</span> applications
+            Here's how I turn ideas into <span style={{ color: "var(--pf-accent)" }}>real-world</span> applications
           </h2>
         </motion.div>
 
-        {/* Zigzag dotted path linking the cards (desktop) */}
         <svg
           className="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-0"
           viewBox="0 0 85 100"
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Dotted background path */}
           <path
             d={CURVE_D}
             fill="none"
-            stroke="rgba(255,255,255,0.15)"
+            stroke="var(--pf-line)"
             strokeDasharray="5 6"
             strokeLinecap="round"
             strokeLinejoin="round"
             vectorEffect="non-scaling-stroke"
             strokeWidth="2"
           />
-          {/* Animated solid foreground path */}
           <motion.path
             d={CURVE_D}
             fill="none"
-            stroke={RED}
+            stroke="var(--pf-accent)"
             strokeDasharray="5 6"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -744,29 +768,18 @@ function Process() {
             strokeWidth="2.5"
             style={{ pathLength }}
           />
-          {/* Connection point markers */}
           {[
             [69, 13],
             [22, 37],
             [69, 61],
             [22, 85],
           ].map(([cx, cy]) => (
-            <circle
-              key={`${cx}-${cy}`}
-              cx={cx}
-              cy={cy}
-              r="2.5"
-              fill={RED}
-              stroke="#000"
-              strokeWidth="1"
-            />
+            <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="2.5" fill="var(--pf-accent)" stroke="var(--pf-bg)" strokeWidth="1" />
           ))}
         </svg>
 
-        {/* Mobile vertical line */}
-        <div className="md:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-[repeating-linear-gradient(to_bottom,rgba(255,255,255,0.15)_0_6px,transparent_6px_12px)] z-0" />
+        <div className="md:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-[repeating-linear-gradient(to_bottom,var(--pf-line)_0_6px,transparent_6px_12px)] z-0" />
 
-        {/* Cards */}
         <div className="flex flex-col gap-8 items-center md:block z-10 w-full">
           {processSteps.map((s, i) => (
             <div
@@ -802,41 +815,41 @@ function ProcessCard({
       onHoverStart={() => setHover(true)}
       onHoverEnd={() => setHover(false)}
       whileHover={{ scale: 1.03 }}
-      className="w-72 sm:w-80 rounded-[2rem] p-2 relative flex flex-col items-center z-10 bg-[#0a0a0a] border border-white/10 shadow-[0_15px_40px_rgba(0,0,0,0.4)] hover:border-[#ff2a2a]/50 transition-colors duration-700"
+      className="w-72 sm:w-80 rounded-[2rem] p-2 relative flex flex-col items-center z-10 bg-[var(--pf-card-bg)] border border-[var(--pf-card-border)] shadow-[0_15px_40px_var(--pf-shadow-xl)] hover:border-[var(--pf-accent-border)] transition-colors duration-700"
       style={{ transform: `rotate(${rotate}deg)` }}
     >
       <div
         className="w-5 h-5 rounded-full absolute top-4 border z-10 transition-colors duration-700"
         style={{
-          background: hover ? RED : "rgba(255,255,255,0.08)",
-          borderColor: hover ? RED : "rgba(255,255,255,0.2)",
+          background: hover ? "var(--pf-accent)" : "var(--pf-card-bg)",
+          borderColor: hover ? "var(--pf-accent)" : "var(--pf-glass-border)",
         }}
       />
       <div
         className="w-full rounded-[1.5rem] mt-8 p-8 flex flex-col min-h-[220px] transition-colors duration-700 border"
         style={{
-          backgroundColor: hover ? RED : "rgba(255,255,255,0.03)",
-          borderColor: hover ? RED : "rgba(255,255,255,0.08)",
+          backgroundColor: hover ? "var(--pf-accent)" : "var(--pf-card-bg)",
+          borderColor: hover ? "var(--pf-accent)" : "var(--pf-card-border)",
         }}
       >
         <span
           className="inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-black mb-4 transition-colors duration-700"
           style={{
-            background: hover ? "#000" : RED,
-            color: hover ? "#fff" : "#fff",
+            background: hover ? "var(--pf-bg)" : "var(--pf-accent)",
+            color: hover ? "var(--pf-fg)" : "var(--pf-text-on-accent)",
           }}
         >
           {step.n}
         </span>
         <h3
           className="text-2xl font-black mb-3 tracking-tight transition-colors duration-700"
-          style={{ color: "#fff" }}
+          style={{ color: "var(--pf-fg)" }}
         >
           {step.title}
         </h3>
         <p
           className="text-sm leading-relaxed font-medium transition-colors duration-700"
-          style={{ color: hover ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.55)" }}
+          style={{ color: hover ? "rgba(0,0,0,0.9)" : "var(--pf-fg-subtle)" }}
         >
           {step.body}
         </p>
@@ -892,29 +905,21 @@ function ExperienceArrowButton({ href }: { href?: string }) {
       type="button"
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.94 }}
-      className="group/arrow relative shrink-0 w-11 h-11 md:w-12 md:h-12 rounded-full border border-white/15 bg-white/[0.02] flex items-center justify-center overflow-hidden transition-colors duration-300 hover:border-transparent"
+      className="group/arrow relative shrink-0 w-11 h-11 md:w-12 md:h-12 rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] flex items-center justify-center overflow-hidden transition-colors duration-300 hover:border-transparent"
       aria-label="View details"
     >
       <span
         className="absolute inset-0 scale-0 rounded-full transition-transform duration-300 ease-out group-hover/arrow:scale-100"
-        style={{ background: RED }}
+        style={{ background: "var(--pf-accent)" }}
       />
       <ArrowUpRight
-        className="relative w-5 h-5 text-white/70 transition-all duration-300 group-hover/arrow:text-black group-hover/arrow:rotate-45"
+        className="relative w-5 h-5 text-[var(--pf-fg)] transition-all duration-300 group-hover/arrow:text-[var(--pf-bg)] group-hover/arrow:rotate-45"
         strokeWidth={2.25}
       />
     </motion.button>
   );
 
-  if (href) {
-    return (
-      <a href={href} target="_blank" rel="noreferrer">
-        {content}
-      </a>
-    );
-  }
-
-  return content;
+  return href ? <a href={href} target="_blank" rel="noreferrer">{content}</a> : content;
 }
 
 function Experience() {
@@ -928,7 +933,7 @@ function Experience() {
   return (
     <section
       id="experience"
-      className="relative py-32 px-6 bg-black border-t border-white/5"
+      className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]"
     >
       <div className="max-w-5xl mx-auto">
         <div className="mb-20">
@@ -936,7 +941,7 @@ function Experience() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
           >
             Experience
           </motion.span>
@@ -946,14 +951,14 @@ function Experience() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            Where I've <span style={{ color: RED }}>built</span> & led
+            Where I've <span style={{ color: "var(--pf-accent)" }}>built</span> & led
           </motion.h2>
         </div>
 
         <div ref={ref} className="relative pl-8 md:pl-16">
-          <div className="absolute left-2 md:left-6 top-0 bottom-0 w-[2px] bg-white/10" />
+          <div className="absolute left-2 md:left-6 top-0 bottom-0 w-[2px] bg-[var(--pf-line)]" />
           <motion.div
-            style={{ height: lineHeight, background: RED }}
+            style={{ height: lineHeight, background: "var(--pf-accent)" }}
             className="absolute left-2 md:left-6 top-0 w-[2px]"
           />
 
@@ -968,26 +973,26 @@ function Experience() {
                 className="relative"
               >
                 <div
-                  className="absolute -left-8 md:-left-16 top-2 w-4 h-4 rounded-full ring-4 ring-black"
-                  style={{ background: RED }}
+                  className="absolute -left-8 md:-left-16 top-2 w-4 h-4 rounded-full ring-4 ring-[var(--pf-bg)]"
+                  style={{ background: "var(--pf-accent)" }}
                 />
                 <div className="flex items-start justify-between gap-6">
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: RED }}>
+                    <div className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: "var(--pf-accent)" }}>
                       {e.period}
                     </div>
                     <h3 className="mt-2 text-2xl md:text-3xl font-black">
                       {e.role}
                     </h3>
-                    <p className="text-sm text-white/60 mt-1">{e.org}</p>
-                    <p className="mt-4 text-white/75 leading-relaxed max-w-2xl">
+                    <p className="text-sm text-[var(--pf-fg-subtle)] mt-1">{e.org}</p>
+                    <p className="mt-4 text-[var(--pf-fg-muted)] leading-relaxed max-w-2xl">
                       {e.body}
                     </p>
                     <div className="mt-5 flex flex-wrap gap-2">
                       {e.tech.map((t) => (
                         <span
                           key={t}
-                          className="text-xs px-3 py-1 rounded-full border border-white/15 text-white/70"
+                          className="text-xs px-3 py-1 rounded-full border border-[var(--pf-card-border)] text-[var(--pf-fg-subtle)]"
                         >
                           {t}
                         </span>
@@ -1015,7 +1020,7 @@ function Experience() {
   );
 }
 
-/* PROJECTS                                                            */
+/* PROJECTS */
 
 const projects = [
   {
@@ -1050,16 +1055,13 @@ const projects = [
 
 function Projects() {
   return (
-    <section
-      id="projects"
-      className="relative bg-black border-t border-white/5"
-    >
+    <section id="projects" className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
       <div className="max-w-6xl mx-auto px-6 pt-32 pb-16">
         <motion.span
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6"
+          className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
         >
           Selected Work
         </motion.span>
@@ -1069,9 +1071,9 @@ function Projects() {
           viewport={{ once: true }}
           className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
         >
-          Projects that <span style={{ color: RED }}>ship</span>
+          Projects that <span style={{ color: "var(--pf-accent)" }}>ship</span>
         </motion.h2>
-        <p className="mt-6 max-w-2xl text-white/60 text-lg">
+        <p className="mt-6 max-w-2xl text-[var(--pf-fg-subtle)] text-lg">
           Real products, real impact — each one built end-to-end with production
           engineering practices.
         </p>
@@ -1107,58 +1109,36 @@ function ProjectCard({
   const isRed = project.accent === RED;
 
   return (
-    <div
-      ref={ref}
-      className="sticky px-6"
-      style={{ top: `${80 + index * 24}px`, zIndex: 10 + index }}
-    >
+    <div ref={ref} className="sticky px-6" style={{ top: `${80 + index * 24}px`, zIndex: 10 + index }}>
       <motion.article
         style={{
           scale,
           opacity,
           y,
-          background: isRed ? RED : "#0a0a0a",
-          borderColor: isRed ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.1)",
+          background: isRed ? "var(--pf-accent)" : "var(--pf-card-bg)",
+          borderColor: isRed ? "rgba(0,0,0,0.2)" : "var(--pf-card-border)",
         }}
-        className="max-w-6xl mx-auto my-6 rounded-3xl border p-8 md:p-14 grid md:grid-cols-[1fr_auto] gap-8 items-end shadow-2xl"
+        className="max-w-6xl mx-auto my-6 rounded-3xl border p-8 md:p-14 grid md:grid-cols-[1fr_auto] gap-8 items-end shadow-[0_15px_40px_var(--pf-shadow-xl)]"
       >
         <div>
           <div className="flex items-center gap-3 mb-6">
             <span
-              className={`text-xs font-bold px-3 py-1 rounded-full ${
-                isRed ? "bg-black text-white" : "text-black"
-              }`}
-              style={!isRed ? { background: RED } : undefined}
+              className={`text-xs font-bold px-3 py-1 rounded-full ${isRed ? "bg-[var(--pf-accent)] text-[var(--pf-text-on-accent)]" : "text-[var(--pf-bg)]"}`}
+              style={!isRed ? { background: "var(--pf-accent)", color: "var(--pf-text-on-accent)" } : undefined}
             >
               {project.tag}
             </span>
-            <span
-              className={`text-xs uppercase tracking-widest ${
-                isRed ? "text-black/60" : "text-white/40"
-              }`}
-            >
+            <span className={`text-xs uppercase tracking-widest ${isRed ? "text-[var(--pf-text-on-accent-muted)]" : "text-[var(--pf-fg-dim)]"}`}>
               Project {project.n} / {String(total).padStart(2, "0")}
             </span>
           </div>
-          <h3
-            className={`text-4xl md:text-6xl font-black tracking-tight leading-[0.95] ${
-              isRed ? "text-white" : "text-white"
-            }`}
-          >
+          <h3 className="text-4xl md:text-6xl font-black tracking-tight leading-[0.95] text-white">
             {project.name}
           </h3>
-          <p
-            className={`mt-3 text-lg md:text-xl font-medium ${
-              isRed ? "text-black" : "text-white/60"
-            }`}
-          >
+          <p className={`mt-3 text-lg md:text-xl font-medium ${isRed ? "text-[var(--pf-text-on-accent)]" : "text-[var(--pf-fg-muted)]"}`}>
             {project.subtitle}
           </p>
-          <p
-            className={`mt-6 max-w-2xl leading-relaxed ${
-              isRed ? "text-white/95" : "text-white/75"
-            }`}
-          >
+          <p className={`mt-6 max-w-2xl leading-relaxed ${isRed ? "text-[var(--pf-text-on-accent)]/95" : "text-[var(--pf-fg-muted)]"}`}>
             {project.body}
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
@@ -1168,7 +1148,7 @@ function ProjectCard({
                 className={`text-xs px-3 py-1 rounded-full border ${
                   isRed
                     ? "border-black/30 text-black bg-black/5"
-                    : "border-white/15 text-white/70"
+                    : "border-[var(--pf-card-border)] text-[var(--pf-fg-dim)]"
                 }`}
               >
                 {t}
@@ -1183,8 +1163,8 @@ function ProjectCard({
             rel="noreferrer"
             className={`px-5 py-2 rounded-full text-sm font-semibold transition ${
               isRed
-                ? "bg-black text-white hover:bg-white hover:text-black"
-                : "bg-white text-black hover:bg-white/90"
+                ? "bg-[var(--pf-bg)] text-[var(--pf-fg)] hover:opacity-90"
+                : "bg-[var(--pf-bg)] text-[var(--pf-fg)] hover:opacity-90"
             }`}
           >
             Under Maintenance
@@ -1194,7 +1174,6 @@ function ProjectCard({
     </div>
   );
 }
-
 
 /* ------------------------------------------------------------------ */
 /* ACHIEVEMENTS                                                        */
@@ -1240,17 +1219,9 @@ const hackvedaPhotos = [
   { src: hackvedaCertificate, alt: "HackVeda winner certificate" },
 ];
 
-const smartIndiaPhotos = [
-  { src: smartIndiaTeam, alt: "Smart India Hackathon internal winning team" },
-];
-
-const gdgPhotos = [
-  { src: gdgTeam, alt: "GDG On Campus operations team" },
-];
-
-const articlePhotos = [
-  { src: articleImage, alt: "The Art of Prompting article feature" },
-];
+const smartIndiaPhotos = [{ src: smartIndiaTeam, alt: "Smart India Hackathon internal winning team" }];
+const gdgPhotos = [{ src: gdgTeam, alt: "GDG On Campus operations team" }];
+const articlePhotos = [{ src: articleImage, alt: "The Art of Prompting article feature" }];
 
 type AchievementPhoto = { src: string; alt: string };
 
@@ -1305,7 +1276,7 @@ function AchievementPhotoGallery({
                 setActivePhoto(photoIndex);
               }
             }}
-            className={`group/photo relative cursor-zoom-in overflow-hidden rounded-xl border border-white/10 outline-none focus-visible:ring-2 focus-visible:ring-[#ff2a2a] ${
+            className={`group/photo relative cursor-zoom-in overflow-hidden rounded-xl border border-[var(--pf-card-border)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-accent)] ${
               photos.length === 1 ? "col-span-2 aspect-[16/9]" : "aspect-[4/3]"
             }`}
           >
@@ -1325,7 +1296,7 @@ function AchievementPhotoGallery({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-10"
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-[var(--pf-bg)]/85 p-4 backdrop-blur-sm md:p-10"
             role="dialog"
             aria-modal="true"
             aria-label={`${achievement.title} photos`}
@@ -1343,7 +1314,7 @@ function AchievementPhotoGallery({
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.96, y: 12 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="relative w-full max-w-4xl rounded-3xl border border-white/15 bg-black p-3 shadow-2xl md:p-5"
+              className="relative w-full max-w-4xl rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-bg)] p-3 shadow-[0_15px_40px_var(--pf-shadow-xl)] md:p-5"
               onMouseEnter={cancelScheduledClose}
               onClick={(event) => event.stopPropagation()}
             >
@@ -1351,11 +1322,11 @@ function AchievementPhotoGallery({
                 type="button"
                 aria-label={`Close ${achievement.title} photos`}
                 onClick={() => setActivePhoto(null)}
-                className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--pf-glass-bg)] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
               >
                 <X className="h-5 w-5" />
               </button>
-              <div className="relative overflow-hidden rounded-2xl bg-white/[0.04]">
+              <div className="relative overflow-hidden rounded-2xl bg-[var(--pf-card-bg)]">
                 <img
                   src={photos[activePhoto].src}
                   alt={photos[activePhoto].alt}
@@ -1367,7 +1338,7 @@ function AchievementPhotoGallery({
                       type="button"
                       aria-label="Previous achievement photo"
                       onClick={showPreviousPhoto}
-                      className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--pf-glass-bg)] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
                     >
                       <ArrowLeft className="h-5 w-5" />
                     </button>
@@ -1375,35 +1346,33 @@ function AchievementPhotoGallery({
                       type="button"
                       aria-label="Next achievement photo"
                       onClick={showNextPhoto}
-                      className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-[#ff2a2a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--pf-glass-bg)] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
                     >
                       <ArrowRight className="h-5 w-5" />
                     </button>
                   </>
                 )}
               </div>
-              <div className="mt-4 border-t border-white/10 px-2 pb-2 pt-5 md:px-3">
+              <div className="mt-4 border-t border-[var(--pf-card-border)] px-2 pb-2 pt-5 md:px-3">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <div className="mb-4 flex items-center gap-3">
-                      <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
-                      <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
-                        {achievement.tag}
-                      </span>
+                    <div className="mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-[var(--pf-accent-soft)]">
+                      <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
+                      {achievement.tag}
                     </div>
-                    <h3 className="max-w-2xl text-2xl font-black leading-[0.95] tracking-tight text-white md:text-4xl">
+                    <h3 className="max-w-2xl text-2xl font-black leading-[0.95] tracking-tight text-[var(--pf-fg)] md:text-4xl">
                       {achievement.title}
                     </h3>
-                    <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">
+                    <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--pf-fg)]">
                       {achievement.org}
                     </p>
                   </div>
-                  <span className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-white/50">
+                  <span className="rounded-full border border-[var(--pf-card-border)] px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-[var(--pf-fg-dim)]">
                     {String(activePhoto + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
                   </span>
                 </div>
                 <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <p className="max-w-2xl border-l-2 border-[#ff2a2a] pl-4 text-sm leading-relaxed text-white">
+                  <p className="max-w-2xl border-l-2 pl-4 text-sm leading-relaxed text-[var(--pf-fg-muted)]" style={{ borderColor: "var(--pf-accent)" }}>
                     {achievement.body}
                   </p>
                   {achievement.tag === "Published" && (
@@ -1411,7 +1380,7 @@ function AchievementPhotoGallery({
                       href="https://heyzine.com/flip-book/866962fcb7.html#page/29"
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#ff2a2a] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#ff2a2a] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--pf-accent-border)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] hover:text-[var(--pf-text-on-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
                     >
                       Show
                       <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
@@ -1429,14 +1398,14 @@ function AchievementPhotoGallery({
 
 function Achievements() {
   return (
-    <section className="relative py-32 px-6 bg-black border-t border-white/5">
+    <section className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
           >
             Recognition
           </motion.span>
@@ -1446,7 +1415,7 @@ function Achievements() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            Wins & <span style={{ color: RED }}>Milestones</span>
+            Wins & <span style={{ color: "var(--pf-accent)" }}>Milestones</span>
           </motion.h2>
         </div>
 
@@ -1458,44 +1427,30 @@ function Achievements() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-[#ff2a2a]/50 transition"
+              className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-gradient-to-br from-[var(--pf-card-bg)] to-transparent hover:border-[var(--pf-accent-border)] transition"
             >
-              {i === 0 && (
-                <AchievementPhotoGallery
-                  achievement={a}
-                  photos={hackvedaPhotos}
-                />
-              )}
-              {i === 1 && (
-                <AchievementPhotoGallery
-                  achievement={a}
-                  photos={smartIndiaPhotos}
-                />
-              )}
-              {i === 2 && (
-                <AchievementPhotoGallery achievement={a} photos={gdgPhotos} />
-              )}
-              {i === 3 && (
-                <AchievementPhotoGallery achievement={a} photos={articlePhotos} />
-              )}
-              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
-                <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
+              {i === 0 && <AchievementPhotoGallery achievement={a} photos={hackvedaPhotos} />}
+              {i === 1 && <AchievementPhotoGallery achievement={a} photos={smartIndiaPhotos} />}
+              {i === 2 && <AchievementPhotoGallery achievement={a} photos={gdgPhotos} />}
+              {i === 3 && <AchievementPhotoGallery achievement={a} photos={articlePhotos} />}
+              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
+                <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
                 {a.tag}
               </div>
-              <h3 className="text-xl font-black mb-2 leading-tight">
+              <h3 className="text-xl font-black mb-2 leading-tight text-[var(--pf-fg)]">
                 {a.title}
               </h3>
-              <p className="text-xs uppercase tracking-widest text-white/50 mb-3">
+              <p className="text-xs uppercase tracking-widest text-[var(--pf-fg-subtle)] mb-3">
                 {a.org}
               </p>
               <div className="flex flex-wrap items-center gap-4">
-                <p className="text-sm text-white/70 leading-relaxed">{a.body}</p>
+                <p className="text-sm text-[var(--pf-fg-muted)] leading-relaxed">{a.body}</p>
                 {i === 3 && (
                   <a
                     href="https://heyzine.com/flip-book/866962fcb7.html#page/29"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#ff2a2a] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#ff2a2a] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--pf-accent-border)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] hover:text-[var(--pf-text-on-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
                   >
                     Show
                     <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
@@ -1511,7 +1466,7 @@ function Achievements() {
 }
 
 /* ------------------------------------------------------------------ */
-/* CERTIFICATIONS — verified credentials                              */
+/* CERTIFICATIONS                                                      */
 /* ------------------------------------------------------------------ */
 const certifications = [
   {
@@ -1525,14 +1480,14 @@ const certifications = [
 
 function Certifications() {
   return (
-    <section className="relative py-32 px-6 bg-black border-t border-white/5">
+    <section className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
           >
             Certificates
           </motion.span>
@@ -1542,7 +1497,7 @@ function Certifications() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            Verified <span style={{ color: RED }}>credentials</span>
+            Verified <span style={{ color: "var(--pf-accent)" }}>credentials</span>
           </motion.h2>
         </div>
 
@@ -1554,26 +1509,26 @@ function Certifications() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-[#ff2a2a]/50 transition"
+              className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-gradient-to-br from-[var(--pf-card-bg)] to-transparent hover:border-[var(--pf-accent-border)] transition"
             >
-              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-[#ff6b6b]">
-                <span className="h-2 w-2 rounded-full bg-[#ff2a2a] shadow-[0_0_14px_rgba(255,42,42,0.8)]" />
+              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
+                <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
                 {c.tag}
               </div>
-              <h3 className="text-xl font-black mb-2 leading-tight">
+              <h3 className="text-xl font-black mb-2 leading-tight text-[var(--pf-fg)]">
                 {c.title}
               </h3>
-              <p className="text-xs uppercase tracking-widest text-white/50 mb-3">
+              <p className="text-xs uppercase tracking-widest text-[var(--pf-fg-subtle)] mb-3">
                 {c.org}
               </p>
-              <p className="mt-4 text-sm text-white/70 leading-relaxed">
+              <p className="mt-4 text-sm text-[var(--pf-fg-muted)] leading-relaxed">
                 {c.body}
               </p>
               <a
                 href={c.link}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-6 inline-flex shrink-0 items-center gap-2 rounded-full border border-[#ff2a2a] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#ff2a2a] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="mt-6 inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--pf-accent-border)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] hover:text-[var(--pf-text-on-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
               >
                 Show
                 <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
@@ -1606,14 +1561,14 @@ const education = [
 
 function Education() {
   return (
-    <section className="relative py-32 px-6 bg-black border-t border-white/5">
+    <section className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
       <div className="max-w-5xl mx-auto grid md:grid-cols-[280px_1fr] gap-12">
         <div>
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-white/20 text-xs tracking-[0.2em] uppercase text-white/70 mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
           >
             Education
           </motion.span>
@@ -1623,7 +1578,7 @@ function Education() {
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-black tracking-tight leading-[0.95]"
           >
-            The <span style={{ color: RED }}>foundation</span>
+            The <span style={{ color: "var(--pf-accent)" }}>foundation</span>
           </motion.h2>
         </div>
         <div className="space-y-6">
@@ -1634,17 +1589,14 @@ function Education() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="p-8 rounded-3xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition"
+              className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] hover:bg-[var(--pf-card-bg)] transition"
             >
-              <div
-                className="text-xs uppercase tracking-widest font-semibold mb-3"
-                style={{ color: RED }}
-              >
+              <div className="text-xs uppercase tracking-widest font-semibold mb-3" style={{ color: "var(--pf-accent)" }}>
                 {e.period}
               </div>
-              <h3 className="text-xl md:text-2xl font-black">{e.degree}</h3>
-              <p className="text-sm text-white/60 mt-1">{e.org}</p>
-              <p className="mt-4 text-white/70">{e.note}</p>
+              <h3 className="text-xl md:text-2xl font-black text-[var(--pf-fg)]">{e.degree}</h3>
+              <p className="text-sm text-[var(--pf-fg-subtle)] mt-1">{e.org}</p>
+              <p className="mt-4 text-[var(--pf-fg-muted)]">{e.note}</p>
             </motion.div>
           ))}
         </div>
@@ -1669,21 +1621,21 @@ function Contact() {
     <section
       id="contact"
       ref={ref}
-      className="relative py-40 px-6 bg-black border-t border-white/5 overflow-hidden"
+      className="relative py-40 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)] overflow-hidden"
     >
       <motion.div
         style={{ y, scale }}
         className="max-w-5xl mx-auto text-center"
       >
-        <p className="text-xs tracking-[0.3em] uppercase mb-8" style={{ color: RED }}>
+        <p className="text-xs tracking-[0.3em] uppercase mb-8" style={{ color: "var(--pf-accent)" }}>
           Let's build something
         </p>
         <h2 className="text-6xl md:text-9xl font-black tracking-tight leading-[0.9]">
           Say
           <br />
-          <span style={{ color: RED }}>مَرْحَبًا Hello नमस्ते</span>
+          <span style={{ color: "var(--pf-accent)" }}>مَرْحَبًا Hello नमस्ते</span>
         </h2>
-        <p className="mt-10 text-white/70 max-w-xl mx-auto text-lg">
+        <p className="mt-10 text-[var(--pf-fg-muted)] max-w-xl mx-auto text-lg">
           Open to internships, freelance builds, and full-time roles in AI &
           Full-Stack engineering. I typically respond within 24–48 hours.
         </p>
@@ -1693,8 +1645,8 @@ function Contact() {
             href={GMAIL_COMPOSE_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-white text-sm font-semibold hover:opacity-90 transition"
-            style={{ background: RED }}
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-[var(--pf-text-on-accent)] text-sm font-semibold transition"
+            style={{ background: "var(--pf-accent)" }}
           >
             <MailIcon className="w-5 h-5" />
             Email me
@@ -1703,7 +1655,7 @@ function Contact() {
             href={WHATSAPP_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/20 text-sm font-semibold hover:bg-white hover:text-black transition"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-[var(--pf-card-border)] text-sm font-semibold hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
           >
             <WhatsAppIcon className="w-5 h-5" />
             WhatsApp
@@ -1715,7 +1667,7 @@ function Contact() {
             href={LINKEDIN_URL}
             target="_blank"
             rel="noreferrer"
-            className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition"
+            className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
           >
             <LinkedInIcon className="w-4 h-4" />
           </a>
@@ -1723,7 +1675,7 @@ function Contact() {
             href={GITHUB_URL}
             target="_blank"
             rel="noreferrer"
-            className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition"
+            className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
           >
             <GithubIcon className="w-4 h-4" />
           </a>
@@ -1735,7 +1687,7 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="border-t border-white/5 px-6 py-10 text-sm text-white/40 bg-black">
+    <footer className="border-t border-[var(--pf-line)] px-6 py-10 text-sm text-[var(--pf-fg-dim)] bg-[var(--pf-bg)]">
       <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
       </div>
     </footer>
