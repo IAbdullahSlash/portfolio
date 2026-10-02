@@ -13,7 +13,7 @@ export default defineConfig(async (env) => {
       server: { entry: "server" },
     }),
     nitro({
-      defaultPreset: "cloudflare-module",
+      defaultPreset: "vercel",
     }),
     react(),
   ];
