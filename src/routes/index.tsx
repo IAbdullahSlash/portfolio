@@ -8,6 +8,7 @@ import {
   useSpring,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
+import profilePic from "@/assets/abdullah.jpg";
 import hackvedaCertificate from "@/assets/hackveda/certificate.jpg";
 import hackvedaTeam from "@/assets/hackveda/team.jpg";
 import hackvedaWinner from "@/assets/hackveda/winner.jpg";
@@ -51,8 +52,7 @@ const WHATSAPP_NUMBER = PHONE.replace(/[^\d]/g, "");
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
   "Hi Abdullah, I came across your portfolio and would like to connect!"
 )}`;
-const PROFILE_PIC =
-  "https://cdn.phototourl.com/free/2026-07-21-abb6ec45-d13e-42a4-b41f-ad3f2db01d3f.jpg";
+const PROFILE_PIC = profilePic;
 
 const RED = "#ff2a2a";
 
