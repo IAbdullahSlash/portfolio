@@ -136,17 +136,17 @@ function Intro() {
   );
 }
 
-function GithubIcon({ className = "w-5 h-5" }: { className?: string }) {
+function GithubIcon({ className = "w-5 h-5", fill = "currentColor" }: { className?: string; fill?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <svg viewBox="0 0 24 24" fill={fill} className={className}>
       <path d="M12 .5C5.73.5.5 5.74.5 12.02c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.87-1.54-3.87-1.54-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.19 1.18a11.1 11.1 0 0 1 5.81 0c2.22-1.49 3.19-1.18 3.19-1.18.63 1.59.23 2.77.12 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.41.35.78 1.05.78 2.11 0 1.52-.01 2.75-.01 3.12 0 .31.21.67.8.56 4.57-1.53 7.86-5.84 7.86-10.93C23.5 5.74 18.27.5 12 .5Z" />
     </svg>
   );
 }
 
-function LinkedInIcon({ className = "w-5 h-5" }: { className?: string }) {
+function LinkedInIcon({ className = "w-5 h-5", fill = "currentColor" }: { className?: string; fill?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <svg viewBox="0 0 24 24" fill={fill} className={className}>
       <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8h4.53v14H.24V8zm7.5 0h4.34v1.92h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V22h-4.53v-6.24c0-1.49-.03-3.4-2.07-3.4-2.08 0-2.4 1.62-2.4 3.3V22H7.74V8z" />
     </svg>
   );
@@ -322,7 +322,7 @@ function Hero() {
             aria-label={playing ? "Mute reel" : "Play reel with sound"}
             className="absolute bottom-5 right-5 flex flex-col items-center gap-1.5 group"
           >
-            <span className="w-14 h-14 rounded-full bg-[var(--pf-glass-bg-solid)] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <span className="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
               {playing ? (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
                   <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" />
@@ -392,7 +392,7 @@ function About() {
               rel="noreferrer"
               className="w-11 h-11 rounded-full bg-white/85 border border-black/20 flex items-center justify-center hover:bg-white/85 transition"
             >
-              <LinkedInIcon className="w-4 h-4" />
+              <LinkedInIcon className="w-4 h-4" fill="black" />
             </a>
             <a
               href={GITHUB_URL}
@@ -400,7 +400,7 @@ function About() {
               rel="noreferrer"
               className="w-11 h-11 rounded-full bg-white/85 border border-black/20 flex items-center justify-center hover:bg-white/85 transition"
             >
-              <GithubIcon className="w-4 h-4" />
+              <GithubIcon className="w-4 h-4" fill="black" />
             </a>
           </div>
         </motion.div>
