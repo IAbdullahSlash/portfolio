@@ -15,7 +15,7 @@ import hackvedaWinner from "@/assets/hackveda/winner.jpg";
 import hackvedaWork from "@/assets/hackveda/work.jpg";
 import smartIndiaTeam from "@/assets/internal-sih/team-win.jfif";
 import gdgTeam from "@/assets/gdg/gdg-team.jpeg";
-import articleImage from "@/assets/article-publish/article.png";
+import githubFoundationsCert from "@/assets/Foundations.jpg";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -97,6 +97,7 @@ function Portfolio() {
       <Experience />
       <Projects />
       <Achievements />
+      <Publications />
       <Certifications />
       <Education />
       <Contact />
@@ -393,9 +394,7 @@ function About() {
     target: ref,
     offset: ["start end", "end start"],
   });
-  const yImg = useTransform(scrollYProgress, [0, 1], ["-10%", "20%"]);
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [-4, 6]);
 
   return (
     <section
@@ -414,7 +413,7 @@ function About() {
       </motion.div>
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-start">
-        <motion.div style={{ y: yImg, rotate }} className="md:sticky md:top-32">
+        <div className="md:sticky md:top-32">
           <div className="w-full h-[70vh] lg:h-[85vh] mx-auto rounded-3xl bg-white/85 border-2 border-black/20 overflow-hidden shadow-2xl">
             <img
               src={PROFILE_PIC}
@@ -440,7 +439,7 @@ function About() {
               <GithubIcon className="w-4 h-4" fill="black" />
             </a>
           </div>
-        </motion.div>
+        </div>
 
         <div>
           <motion.p
@@ -1087,6 +1086,7 @@ const projects = [
     body: "AI powered personal finance platform that creates a Digital Financial Twin to simulate financial decisions before they happen. Uses spending behavior, financial goals, and predictive analytics to help users compare scenarios and make smarter, data driven financial decisions.",
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     accent: RED,
+    live: "https://finance-twin.vercel.app",
   },
 ];
 
@@ -1218,30 +1218,63 @@ function ProjectCard({
 /* ------------------------------------------------------------------ */
 /* ACHIEVEMENTS                                                        */
 /* ------------------------------------------------------------------ */
-const achievements = [
+type AchievementPhoto = { src: string; alt: string };
+
+type Milestone = {
+  tag: string;
+  title: string;
+  org: string;
+  body: string;
+  photos?: AchievementPhoto[];
+  source?: string;
+  link?: string;
+};
+
+const achievements: Milestone[] = [
   {
     tag: "Winner",
     title: "HackVeda National Hackathon",
     org: "ILM University · IBM × AWS",
     body: "Winner of the HackVeda National Level Hackathon organised in collaboration with IBM and AWS.",
+    photos: [
+      { src: hackvedaTeam, alt: "HackVeda team outside the event venue" },
+      { src: hackvedaWinner, alt: "HackVeda winner certificate held outdoors" },
+      { src: hackvedaWork, alt: "Team working together during the HackVeda hackathon" },
+      { src: hackvedaCertificate, alt: "HackVeda winner certificate" },
+    ],
   },
   {
     tag: "Winner",
     title: "Smart India Hackathon — Internal",
     org: "Integral University",
     body: "Winner of the Smart India Hackathon internal edition at Integral University.",
+    photos: [{ src: smartIndiaTeam, alt: "Smart India Hackathon internal winning team" }],
   },
   {
     tag: "Lead",
     title: "GDG On Campus — Operations Lead",
     org: "Integral University",
     body: "Operations & Logistics Lead for Google Developer Group on Campus, coordinating community events and workshops.",
+    photos: [{ src: gdgTeam, alt: "GDG On Campus operations team" }],
   },
+];
+
+const publications: Milestone[] = [
   {
     tag: "Published",
     title: "The Art of Prompting",
     org: "Department of Computer Science — Integral University",
-    body: "Authored and published an article on prompt engineering in the department's annual magazine \"To The Horizon\"."
+    body: "Authored and published an article on prompt engineering in the department's annual magazine \"To The Horizon\".",
+    source: "To The Horizon",
+    link: "https://heyzine.com/flip-book/866962fcb7.html#page/29",
+  },
+  {
+    tag: "Article",
+    title: "How to Build a Chatbot Wrapper?",
+    org: "Substack · abdullahslash",
+    source: "Substack",
+    body: "A hands-on guide to building a chatbot wrapper on top of an LLM API.",
+    link: "https://abdullahslash.substack.com/p/how-to-build-a-chatbot-wrapper?r=7vzbv6",
   },
 ];
 
@@ -1252,40 +1285,15 @@ const certs = [
   { title: "Data Science with Python", org: "Pandas · NumPy · Scikit-learn" },
 ];
 
-const hackvedaPhotos = [
-  { src: hackvedaTeam, alt: "HackVeda team outside the event venue" },
-  { src: hackvedaWinner, alt: "HackVeda winner certificate held outdoors" },
-  { src: hackvedaWork, alt: "Team working together during the HackVeda hackathon" },
-  { src: hackvedaCertificate, alt: "HackVeda winner certificate" },
-];
-
-const smartIndiaPhotos = [{ src: smartIndiaTeam, alt: "Smart India Hackathon internal winning team" }];
-const gdgPhotos = [{ src: gdgTeam, alt: "GDG On Campus operations team" }];
-const articlePhotos = [{ src: articleImage, alt: "The Art of Prompting article feature" }];
-
-type AchievementPhoto = { src: string; alt: string };
 
 function AchievementPhotoGallery({
   achievement,
   photos,
 }: {
-  achievement: (typeof achievements)[number];
+  achievement: Milestone;
   photos: AchievementPhoto[];
 }) {
   const [activePhoto, setActivePhoto] = useState<number | null>(null);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const cancelScheduledClose = () => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-  };
-
-  const scheduleClose = () => {
-    cancelScheduledClose();
-    closeTimeoutRef.current = setTimeout(() => setActivePhoto(null), 250);
-  };
 
   const showPreviousPhoto = () => {
     setActivePhoto((current) =>
@@ -1299,6 +1307,17 @@ function AchievementPhotoGallery({
     );
   };
 
+  useEffect(() => {
+    if (activePhoto === null) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setActivePhoto(null);
+      if (event.key === "ArrowLeft") showPreviousPhoto();
+      if (event.key === "ArrowRight") showNextPhoto();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activePhoto === null]);
+
   return (
     <>
       <div className="grid grid-cols-2 gap-2 -mx-2 -mt-2 mb-7">
@@ -1308,8 +1327,7 @@ function AchievementPhotoGallery({
             tabIndex={0}
             role="button"
             aria-label={`Open ${achievement.title} photo ${photoIndex + 1}`}
-            onMouseEnter={() => setActivePhoto(photoIndex)}
-            onFocus={() => setActivePhoto(photoIndex)}
+            onClick={() => setActivePhoto(photoIndex)}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
@@ -1340,14 +1358,7 @@ function AchievementPhotoGallery({
             role="dialog"
             aria-modal="true"
             aria-label={`${achievement.title} photos`}
-            onMouseEnter={scheduleClose}
-            onMouseLeave={scheduleClose}
             onClick={() => setActivePhoto(null)}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") setActivePhoto(null);
-              if (event.key === "ArrowLeft") showPreviousPhoto();
-              if (event.key === "ArrowRight") showNextPhoto();
-            }}
           >
             <motion.div
               initial={{ scale: 0.94, y: 18 }}
@@ -1355,7 +1366,6 @@ function AchievementPhotoGallery({
               exit={{ scale: 0.96, y: 12 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="relative w-full max-w-4xl rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-bg)] p-3 shadow-[0_15px_40px_var(--pf-shadow-xl)] md:p-5"
-              onMouseEnter={cancelScheduledClose}
               onClick={(event) => event.stopPropagation()}
             >
               <button
@@ -1415,14 +1425,14 @@ function AchievementPhotoGallery({
                   <p className="max-w-2xl border-l-2 pl-4 text-sm leading-relaxed text-[var(--pf-fg-muted)]" style={{ borderColor: "var(--pf-accent)" }}>
                     {achievement.body}
                   </p>
-                  {achievement.tag === "Published" && (
+                  {achievement.link && (
                     <a
-                      href="https://heyzine.com/flip-book/866962fcb7.html#page/29"
+                      href={achievement.link}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--pf-accent-border)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] hover:text-[var(--pf-text-on-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
                     >
-                      Show
+                      Read
                       <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
                     </a>
                   )}
@@ -1436,9 +1446,79 @@ function AchievementPhotoGallery({
   );
 }
 
-function Achievements() {
+function MilestoneCard({ item, index }: { item: Milestone; index: number }) {
   return (
-    <section className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-gradient-to-br from-[var(--pf-card-bg)] to-transparent hover:border-[var(--pf-accent-border)] transition"
+    >
+      {item.photos ? (
+        <AchievementPhotoGallery achievement={item} photos={item.photos} />
+      ) : (
+        <a
+          href={item.link}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Read ${item.title}`}
+          className="group/cover -mx-2 -mt-2 mb-7 flex aspect-[16/9] flex-col justify-between overflow-hidden rounded-xl border border-black/20 bg-[var(--pf-accent)] p-6 outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
+        >
+          <span className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.2em] text-[var(--pf-text-on-accent-muted)]">
+            {item.source}
+            <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover/cover:-translate-y-1 group-hover/cover:translate-x-1" />
+          </span>
+          <span className="text-3xl md:text-4xl font-black leading-[0.95] tracking-tight text-white">
+            {item.title}
+          </span>
+        </a>
+      )}
+      <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
+        <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
+        {item.tag}
+      </div>
+      <h3 className="text-xl font-black mb-2 leading-tight text-[var(--pf-fg)]">
+        {item.title}
+      </h3>
+      <p className="text-xs uppercase tracking-widest text-[var(--pf-fg-subtle)] mb-3">
+        {item.org}
+      </p>
+      <div className="flex flex-wrap items-center gap-4">
+        <p className="text-sm text-[var(--pf-fg-muted)] leading-relaxed">{item.body}</p>
+        {item.link && (
+          <a
+            href={item.link}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--pf-accent-border)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] hover:text-[var(--pf-text-on-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
+          >
+            Read
+            <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
+          </a>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+function MilestoneSection({
+  id,
+  eyebrow,
+  title,
+  accent,
+  items,
+  columns,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  accent: string;
+  items: Milestone[];
+  columns: string;
+}) {
+  return (
+    <section id={id} className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <motion.span
@@ -1447,7 +1527,7 @@ function Achievements() {
             viewport={{ once: true }}
             className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
           >
-            Recognition
+            {eyebrow}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -1455,53 +1535,43 @@ function Achievements() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            Wins & <span style={{ color: "var(--pf-accent)" }}>Milestones</span>
+            {title} <span style={{ color: "var(--pf-accent)" }}>{accent}</span>
           </motion.h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
-          {achievements.map((a, i) => (
-            <motion.div
-              key={a.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-gradient-to-br from-[var(--pf-card-bg)] to-transparent hover:border-[var(--pf-accent-border)] transition"
-            >
-              {i === 0 && <AchievementPhotoGallery achievement={a} photos={hackvedaPhotos} />}
-              {i === 1 && <AchievementPhotoGallery achievement={a} photos={smartIndiaPhotos} />}
-              {i === 2 && <AchievementPhotoGallery achievement={a} photos={gdgPhotos} />}
-              {i === 3 && <AchievementPhotoGallery achievement={a} photos={articlePhotos} />}
-              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
-                <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
-                {a.tag}
-              </div>
-              <h3 className="text-xl font-black mb-2 leading-tight text-[var(--pf-fg)]">
-                {a.title}
-              </h3>
-              <p className="text-xs uppercase tracking-widest text-[var(--pf-fg-subtle)] mb-3">
-                {a.org}
-              </p>
-              <div className="flex flex-wrap items-center gap-4">
-                <p className="text-sm text-[var(--pf-fg-muted)] leading-relaxed">{a.body}</p>
-                {i === 3 && (
-                  <a
-                    href="https://heyzine.com/flip-book/866962fcb7.html#page/29"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--pf-accent-border)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--pf-fg)] transition hover:bg-[var(--pf-accent)] hover:text-[var(--pf-text-on-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
-                  >
-                    Show
-                    <ArrowUpRight className="h-4 w-4" strokeWidth={2.25} />
-                  </a>
-                )}
-              </div>
-            </motion.div>
+        <div className={`grid ${columns} gap-6`}>
+          {items.map((item, i) => (
+            <MilestoneCard key={item.title} item={item} index={i} />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function Achievements() {
+  return (
+    <MilestoneSection
+      id="achievements"
+      eyebrow="Recognition"
+      title="Wins &"
+      accent="Milestones"
+      items={achievements}
+      columns="md:grid-cols-3"
+    />
+  );
+}
+
+function Publications() {
+  return (
+    <MilestoneSection
+      id="publications"
+      eyebrow="Writing"
+      title="My"
+      accent="Publications"
+      items={publications}
+      columns="md:grid-cols-2"
+    />
   );
 }
 
@@ -1511,10 +1581,11 @@ function Achievements() {
 const certifications = [
   {
     tag: "Certified",
-    title: "GitHub Foundations Certificate",
+    title: "GH-900 GitHub Foundations Certificate",
     org: "GitHub · Microsoft Learn",
     body: "A certification that validates my Git and GitHub fundamentals, including version control, collaboration, and CI/CD workflows. Basically, the skills behind how I build, collaborate, and ship code.",
     link: "https://learn.microsoft.com/en-us/users/abdullah-1952/credentials/b636c337abd0aeec",
+    image: githubFoundationsCert,
   },
 ];
 
@@ -1529,7 +1600,7 @@ function Certifications() {
             viewport={{ once: true }}
             className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
           >
-            Certificates
+            Credentials
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -1537,7 +1608,7 @@ function Certifications() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            Verified <span style={{ color: "var(--pf-accent)" }}>credentials</span>
+            Verified <span style={{ color: "var(--pf-accent)" }}>certificates</span>
           </motion.h2>
         </div>
 
@@ -1551,6 +1622,22 @@ function Certifications() {
               transition={{ duration: 0.6, delay: i * 0.1 }}
               className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-gradient-to-br from-[var(--pf-card-bg)] to-transparent hover:border-[var(--pf-accent-border)] transition"
             >
+              {c.image && (
+                <a
+                  href={c.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`View ${c.title}`}
+                  className="group/cert block -mx-2 -mt-2 mb-7 overflow-hidden rounded-xl border border-[var(--pf-card-border)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-accent)]"
+                >
+                  <img
+                    src={c.image}
+                    alt={`${c.title} issued to Abdullah Azmi`}
+                    loading="lazy"
+                    className="block w-full h-auto transition duration-500 group-hover/cert:scale-105"
+                  />
+                </a>
+              )}
               <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
                 <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
                 {c.tag}
