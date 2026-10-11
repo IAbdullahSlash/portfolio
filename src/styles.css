@@ -139,41 +139,65 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    cursor: none;
   }
 
-  a,
-  button,
-  input,
-  textarea,
-  select,
-  [role="button"],
-  [contenteditable],
-  .custom-cursor-clickable {
-    cursor: pointer !important;
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
   }
 }
 
 @layer utilities {
-  .custom-cursor {
+  .cursor-dot,
+  .cursor-ring {
     position: fixed;
     top: 0;
     left: 0;
-    width: 20px;
-    height: 20px;
     pointer-events: none;
     z-index: 99999;
-    background: var(--pf-accent, red);
     border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.15s ease, height 0.15s ease, background 0.15s ease;
-    mix-blend-mode: difference;
+    translate: -50% -50%;
   }
 
-  .custom-cursor.is-clicking {
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 42, 42, 0.6);
+  .cursor-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--pf-fg, #fff);
+    transition: opacity 0.2s ease, scale 0.2s ease;
+  }
+
+  .cursor-ring {
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--pf-fg, #fff);
+    opacity: 0.5;
+    transition:
+      width 0.25s ease,
+      height 0.25s ease,
+      opacity 0.25s ease,
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      scale 0.15s ease;
+  }
+
+  .cursor-dot.is-hovering {
+    opacity: 0;
+  }
+
+  .cursor-ring.is-hovering {
+    width: 56px;
+    height: 56px;
+    opacity: 1;
+    border-color: var(--pf-accent, #ff2a2a);
+    background-color: var(--pf-accent-soft, rgba(255, 42, 42, 0.15));
+  }
+
+  .cursor-ring.is-clicking {
+    scale: 0.8;
+  }
+
+  .cursor-dot.is-clicking {
+    scale: 0.6;
   }
 }
 
