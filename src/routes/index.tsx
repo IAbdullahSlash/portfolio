@@ -16,7 +16,7 @@ import hackvedaWork from "@/assets/hackveda/work.jpg";
 import smartIndiaTeam from "@/assets/internal-sih/team-win.jfif";
 import gdgTeam from "@/assets/gdg/gdg-team.jpeg";
 import articleImage from "@/assets/article-publish/article.png";
-import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -178,27 +178,38 @@ function WhatsAppIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-function SunIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-    </svg>
-  );
-}
+function ThemeToggle({ theme, onToggle }: { theme: string; onToggle: () => void }) {
+  const isDark = theme === "dark";
+  const slot = "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300";
 
-function MoonIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isDark}
+      aria-label="Dark theme"
+      onClick={onToggle}
+      className={`flex shrink-0 w-16 h-8 p-1 rounded-full border transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-accent)] ${
+        isDark ? "bg-zinc-950 border-zinc-800" : "bg-white border-zinc-200"
+      }`}
+    >
+      <span className="flex justify-between items-center w-full">
+        <span className={`${slot} ${isDark ? "translate-x-0 bg-zinc-800" : "translate-x-8 bg-gray-200"}`}>
+          {isDark ? (
+            <Moon className="w-4 h-4 text-white" strokeWidth={1.5} />
+          ) : (
+            <Sun className="w-4 h-4 text-gray-700" strokeWidth={1.5} />
+          )}
+        </span>
+        <span className={`${slot} ${isDark ? "bg-transparent" : "-translate-x-8"}`}>
+          {isDark ? (
+            <Sun className="w-4 h-4 text-gray-500" strokeWidth={1.5} />
+          ) : (
+            <Moon className="w-4 h-4 text-black" strokeWidth={1.5} />
+          )}
+        </span>
+      </span>
+    </button>
   );
 }
 
@@ -223,16 +234,42 @@ function Nav({ theme, onToggleTheme }: { theme: string; onToggleTheme: () => voi
             </a>
           ))}
         </nav>
-        <button
-          type="button"
-          onClick={onToggleTheme}
-          aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-          className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] text-[var(--pf-fg-muted)] hover:text-[var(--pf-fg)] hover:bg-[var(--pf-card-border)] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-accent)]"
-        >
-          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-        </button>
+        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </div>
     </header>
+  );
+}
+
+function FlipText({ children }: { children: string }) {
+  const letters = children.split("").map((l) => (l === " " ? " " : l));
+  const letterClass =
+    "inline-block transition-transform duration-300 ease-in-out motion-reduce:transition-none";
+
+  return (
+    <span className="group relative inline-block overflow-hidden whitespace-nowrap align-top">
+      <span className="flex">
+        {letters.map((letter, i) => (
+          <span
+            key={i}
+            className={`${letterClass} group-hover:-translate-y-[110%]`}
+            style={{ transitionDelay: `${i * 25}ms` }}
+          >
+            {letter}
+          </span>
+        ))}
+      </span>
+      <span aria-hidden className="absolute inset-0 flex">
+        {letters.map((letter, i) => (
+          <span
+            key={i}
+            className={`${letterClass} translate-y-[110%] group-hover:translate-y-0`}
+            style={{ transitionDelay: `${i * 25}ms` }}
+          >
+            {letter}
+          </span>
+        ))}
+      </span>
+    </span>
   );
 }
 
@@ -267,7 +304,7 @@ function Hero() {
             transition={{ delay: 2.2, duration: 0.8 }}
             className="text-4xl md:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight"
           >
-            Hi, I'm Abdullah Azmi,
+            Hi, I'm <FlipText>Abdullah Azmi</FlipText>,
             <br />
             <span style={{ color: "var(--pf-accent)" }}>AI Engineer</span> & Full Stack Developer
           </motion.h1>
@@ -1040,6 +1077,7 @@ const projects = [
     body: "A full-stack AI-powered idea validation system that analyses user concepts, evaluates feasibility, and generates structured execution roadmaps using intelligent decision-making workflows and automated planning mechanisms.",
     tech: ["React", "Python", "Supabase", "LangChain", "PHI-4"],
     accent: RED,
+    live: "https://idea-evaluator-slash.vercel.app/",
   },
   {
     n: "03",
@@ -1049,7 +1087,6 @@ const projects = [
     body: "AI powered personal finance platform that creates a Digital Financial Twin to simulate financial decisions before they happen. Uses spending behavior, financial goals, and predictive analytics to help users compare scenarios and make smarter, data driven financial decisions.",
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     accent: RED,
-    live: "pass",
   },
 ];
 
@@ -1157,18 +1194,21 @@ function ProjectCard({
           </div>
         </div>
         <div className="flex md:flex-col gap-3 md:items-end">
-          <a
-            href={project.live}
-            target="_blank"
-            rel="noreferrer"
-            className={`px-5 py-2 rounded-full text-sm font-semibold transition ${
-              isRed
-                ? "bg-[var(--pf-bg)] text-[var(--pf-fg)] hover:opacity-90"
-                : "bg-[var(--pf-bg)] text-[var(--pf-fg)] hover:opacity-90"
-            }`}
-          >
-            Under Maintenance
-          </a>
+          {"live" in project && project.live ? (
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-semibold transition bg-[var(--pf-bg)] text-[var(--pf-fg)] hover:opacity-90"
+            >
+              Live Demo
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+          ) : (
+            <span className="px-5 py-2 rounded-full text-sm font-semibold bg-[var(--pf-bg)] text-[var(--pf-fg)] opacity-60 cursor-not-allowed">
+              Under Maintenance
+            </span>
+          )}
         </div>
       </motion.article>
     </div>
