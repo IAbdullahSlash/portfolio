@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
   motion,
   AnimatePresence,
   useScroll,
   useTransform,
   useSpring,
+  useAnimate,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
 import profilePic from "@/assets/abdullah.jpg";
@@ -63,6 +64,17 @@ function Portfolio() {
   useEffect(() => {
     const t = setTimeout(() => setIntroDone(true), 2000);
     return () => clearTimeout(t);
+  }, []);
+
+  // Pointer position for the .glow-card spotlight (viewport coords, read by fixed backgrounds).
+  useEffect(() => {
+    const root = document.documentElement;
+    const onMove = (e: PointerEvent) => {
+      root.style.setProperty("--glow-x", `${e.clientX}px`);
+      root.style.setProperty("--glow-y", `${e.clientY}px`);
+    };
+    document.addEventListener("pointermove", onMove);
+    return () => document.removeEventListener("pointermove", onMove);
   }, []);
 
   useEffect(() => {
@@ -231,13 +243,53 @@ function Nav({ theme, onToggleTheme }: { theme: string; onToggleTheme: () => voi
             ["Contact", "#contact"],
           ].map(([label, href]) => (
             <a key={label} href={href} className="hover:text-[var(--pf-fg)] transition">
-              {label}
+              <RandomLetterSwap label={label} />
             </a>
           ))}
         </nav>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </div>
     </header>
+  );
+}
+
+// On hover, each letter slides up and is replaced by a copy from below, in random order.
+function RandomLetterSwap({ label, stagger = 0.025 }: { label: string; stagger?: number }) {
+  const [scope, animate] = useAnimate();
+  const running = useRef(false);
+
+  const swap = async () => {
+    if (running.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    running.current = true;
+
+    const order = [...label].map((_, i) => i).sort(() => Math.random() - 0.5);
+    await Promise.all(
+      order.map((i, n) =>
+        animate(
+          `[data-letter="${i}"]`,
+          { y: "-100%" },
+          { type: "spring", duration: 0.6, bounce: 0.2, delay: n * stagger },
+        ),
+      ),
+    );
+    await animate("[data-letter]", { y: 0 }, { duration: 0 });
+    running.current = false;
+  };
+
+  return (
+    <span ref={scope} onMouseEnter={swap} className="relative inline-flex overflow-hidden">
+      <span className="sr-only">{label}</span>
+      {[...label].map((letter, i) => (
+        <span key={i} aria-hidden className="relative inline-block">
+          <span data-letter={i} className="inline-block">
+            {letter}
+          </span>
+          <span data-letter={i} className="absolute left-0 top-full inline-block">
+            {letter}
+          </span>
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -1289,12 +1341,14 @@ const certs = [
 function AchievementPhotoGallery({
   achievement,
   photos,
+  activePhoto,
+  setActivePhoto,
 }: {
   achievement: Milestone;
   photos: AchievementPhoto[];
+  activePhoto: number | null;
+  setActivePhoto: Dispatch<SetStateAction<number | null>>;
 }) {
-  const [activePhoto, setActivePhoto] = useState<number | null>(null);
-
   const showPreviousPhoto = () => {
     setActivePhoto((current) =>
       current === null ? 0 : (current - 1 + photos.length) % photos.length,
@@ -1327,7 +1381,10 @@ function AchievementPhotoGallery({
             tabIndex={0}
             role="button"
             aria-label={`Open ${achievement.title} photo ${photoIndex + 1}`}
-            onClick={() => setActivePhoto(photoIndex)}
+            onClick={(event) => {
+              event.stopPropagation();
+              setActivePhoto(photoIndex);
+            }}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
@@ -1358,7 +1415,11 @@ function AchievementPhotoGallery({
             role="dialog"
             aria-modal="true"
             aria-label={`${achievement.title} photos`}
-            onClick={() => setActivePhoto(null)}
+            onClick={(event) => {
+              // Keep the click from reaching the card, which would reopen the popup.
+              event.stopPropagation();
+              setActivePhoto(null);
+            }}
           >
             <motion.div
               initial={{ scale: 0.94, y: 18 }}
@@ -1447,16 +1508,30 @@ function AchievementPhotoGallery({
 }
 
 function MilestoneCard({ item, index }: { item: Milestone; index: number }) {
+  const [activePhoto, setActivePhoto] = useState<number | null>(null);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-gradient-to-br from-[var(--pf-card-bg)] to-transparent hover:border-[var(--pf-accent-border)] transition"
+      onClick={(event) => {
+        if (!item.photos || (event.target as Element).closest("a")) return;
+        setActivePhoto(0);
+      }}
+      className={`glow-card p-8 rounded-3xl border border-[var(--pf-card-border)] transition ${
+        item.photos ? "cursor-pointer" : ""
+      }`}
     >
+      <div aria-hidden className="glow-card-halo" />
       {item.photos ? (
-        <AchievementPhotoGallery achievement={item} photos={item.photos} />
+        <AchievementPhotoGallery
+          achievement={item}
+          photos={item.photos}
+          activePhoto={activePhoto}
+          setActivePhoto={setActivePhoto}
+        />
       ) : (
         <a
           href={item.link}
@@ -1620,8 +1695,9 @@ function Certifications() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-gradient-to-br from-[var(--pf-card-bg)] to-transparent hover:border-[var(--pf-accent-border)] transition"
+              className="glow-card p-8 rounded-3xl border border-[var(--pf-card-border)] transition"
             >
+              <div aria-hidden className="glow-card-halo" />
               {c.image && (
                 <a
                   href={c.link}

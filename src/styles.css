@@ -161,7 +161,8 @@
   html select,
   html summary,
   html [role="button"],
-  html [role="switch"] {
+  html [role="switch"],
+  html .cursor-pointer {
     cursor: var(--cursor-hover) !important;
   }
 
@@ -173,6 +174,75 @@
   html textarea,
   html [contenteditable="true"] {
     cursor: text !important;
+  }
+}
+
+/* ── Glow cards: pointer spotlight + glowing border (pointer pos set on <html> as --glow-x/--glow-y) ── */
+.glow-card {
+  --glow-border: 1.5px;
+  --glow-size: 280px;
+  --glow-color: 0 100% 58%;
+  --glow-at: var(--glow-x, -1000px) var(--glow-y, -1000px);
+  position: relative;
+  background-image:
+    radial-gradient(var(--glow-size) var(--glow-size) at var(--glow-at), hsl(var(--glow-color) / 0.09), transparent),
+    linear-gradient(to bottom right, var(--pf-card-bg), transparent);
+  background-attachment: fixed, scroll;
+}
+
+.glow-card::before,
+.glow-card::after,
+.glow-card-halo::before {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: calc(var(--glow-border) * -1);
+  border: var(--glow-border) solid transparent;
+  border-radius: inherit;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+}
+
+.glow-card::before,
+.glow-card-halo::before {
+  background-image: radial-gradient(
+    calc(var(--glow-size) * 0.75) calc(var(--glow-size) * 0.75) at var(--glow-at),
+    hsl(var(--glow-color)),
+    transparent 100%
+  );
+}
+
+.glow-card::after {
+  background-image: radial-gradient(
+    calc(var(--glow-size) * 0.4) calc(var(--glow-size) * 0.4) at var(--glow-at),
+    hsl(0 0% 100% / 0.7),
+    transparent 100%
+  );
+}
+
+.glow-card-halo {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  filter: blur(14px);
+  opacity: 0.8;
+}
+
+.glow-card-halo::before {
+  inset: -10px;
+  border-width: 10px;
+  border-radius: calc(1.5rem + 10px);
+}
+
+@media (pointer: coarse) {
+  .glow-card::before,
+  .glow-card::after,
+  .glow-card-halo {
+    display: none;
   }
 }
 
