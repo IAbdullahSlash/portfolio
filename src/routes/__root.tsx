@@ -7,75 +7,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import tabIcon from "@/assets/tab.png";
-
-const INTERACTIVE = "a, button, [role='button'], [role='switch'], input, textarea, select, label";
-
-function CustomCursor() {
-  const [enabled, setEnabled] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [hovering, setHovering] = useState(false);
-  const [clicking, setClicking] = useState(false);
-
-  const x = useMotionValue(-100);
-  const y = useMotionValue(-100);
-  const ringX = useSpring(x, { stiffness: 500, damping: 40, mass: 0.6 });
-  const ringY = useSpring(y, { stiffness: 500, damping: 40, mass: 0.6 });
-
-  useEffect(() => {
-    const finePointer = window.matchMedia("(pointer: fine)");
-    const update = () => setEnabled(finePointer.matches);
-    update();
-    finePointer.addEventListener("change", update);
-    return () => finePointer.removeEventListener("change", update);
-  }, []);
-
-  useEffect(() => {
-    if (!enabled) return;
-    document.documentElement.classList.add("has-custom-cursor");
-
-    const onMove = (e: MouseEvent) => {
-      x.set(e.clientX);
-      y.set(e.clientY);
-      setVisible(true);
-    };
-    const onOver = (e: MouseEvent) => {
-      setHovering(!!(e.target as Element | null)?.closest?.(INTERACTIVE));
-    };
-    const onLeave = () => setVisible(false);
-    const onDown = () => setClicking(true);
-    const onUp = () => setClicking(false);
-
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseover", onOver);
-    document.documentElement.addEventListener("mouseleave", onLeave);
-    window.addEventListener("mousedown", onDown);
-    window.addEventListener("mouseup", onUp);
-    return () => {
-      document.documentElement.classList.remove("has-custom-cursor");
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseover", onOver);
-      document.documentElement.removeEventListener("mouseleave", onLeave);
-      window.removeEventListener("mousedown", onDown);
-      window.removeEventListener("mouseup", onUp);
-    };
-  }, [enabled, x, y]);
-
-  if (!enabled) return null;
-
-  const state = `${hovering ? " is-hovering" : ""}${clicking ? " is-clicking" : ""}`;
-
-  return (
-    <div aria-hidden="true" style={{ opacity: visible ? 1 : 0, transition: "opacity 0.2s" }}>
-      <motion.div className={`cursor-ring${state}`} style={{ x: ringX, y: ringY }} />
-      <motion.div className={`cursor-dot${state}`} style={{ x, y }} />
-    </div>
-  );
-}
 
 function NotFoundComponent() {
   return (
@@ -184,7 +119,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      <CustomCursor />
     </QueryClientProvider>
   );
 }
