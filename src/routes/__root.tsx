@@ -4,32 +4,103 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import tabIcon from "@/assets/tab.png";
 
 function NotFoundComponent() {
+  const { pathname } = useLocation();
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("portfolio-theme");
+    if (saved === "light" || saved === "dark") setTheme(saved);
+  }, []);
+
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
+    transition: { delay, duration: 0.7, ease: "easeOut" as const },
+  });
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+    <div
+      data-theme={theme}
+      className="relative flex min-h-screen flex-col overflow-hidden bg-[var(--pf-bg)] px-6 font-sans text-[var(--pf-fg)] antialiased selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)]"
+      style={{
+        backgroundImage:
+          "linear-gradient(to right, var(--pf-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--pf-grid) 1px, transparent 1px)",
+        backgroundSize: "80px 80px",
+      }}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        style={{ background: "var(--pf-accent-glow)", opacity: 0.35 }}
+      />
+
+      <header className="relative mx-auto flex w-full max-w-6xl items-center pt-8">
+        <Link to="/" className="text-lg font-black tracking-tight text-[var(--pf-fg)]">
+          Abdullah Azmi<span style={{ color: "var(--pf-accent)" }}>.</span>
+        </Link>
+      </header>
+
+      <main className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center py-16 text-center">
+        <motion.span
+          {...rise(0)}
+          className="mb-8 inline-block rounded-full border border-[var(--pf-card-border)] px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-[var(--pf-fg-subtle)]"
+        >
+          Error 404
+        </motion.span>
+
+        <motion.h1
+          {...rise(0.1)}
+          aria-label="404"
+          className="select-none text-[34vw] font-black leading-[0.8] tracking-tighter sm:text-[13rem] md:text-[17rem]"
+        >
+          4<span style={{ color: "var(--pf-accent)" }}>0</span>4
+        </motion.h1>
+
+        <motion.h2
+          {...rise(0.25)}
+          className="mt-8 text-3xl font-black leading-[0.95] tracking-tight md:text-5xl"
+        >
+          This page took a <span style={{ color: "var(--pf-accent)" }}>wrong turn</span>.
+        </motion.h2>
+
+        <motion.p {...rise(0.35)} className="mt-5 max-w-md text-base text-[var(--pf-fg-muted)] md:text-lg">
           The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
+        </motion.p>
+
+        <motion.code
+          {...rise(0.45)}
+          className="mt-8 max-w-full truncate rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] px-5 py-2 font-mono text-xs text-[var(--pf-fg-subtle)] md:text-sm"
+        >
+          GET <span className="text-[var(--pf-fg)]">{pathname}</span>{" "}
+          <span style={{ color: "var(--pf-accent)" }}>&rarr; 404 Not Found</span>
+        </motion.code>
+
+        <motion.div {...rise(0.55)} className="mt-10 flex flex-wrap items-center justify-center gap-4">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="rounded-full bg-[var(--pf-fg)] px-6 py-3 text-sm font-semibold text-[var(--pf-bg)] transition hover:opacity-90"
           >
-            Go home
+            Back to home
           </Link>
-        </div>
-      </div>
+          <a
+            href="/#projects"
+            className="rounded-full border border-[var(--pf-glass-border-strong)] px-6 py-3 text-sm font-semibold transition hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)]"
+          >
+            View projects
+          </a>
+        </motion.div>
+      </main>
     </div>
   );
 }
