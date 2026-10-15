@@ -77,25 +77,24 @@ function Portfolio() {
     return () => document.removeEventListener("pointermove", onMove);
   }, []);
 
+  // RootShell applies the saved theme to <html> before first paint; sync the toggle with it.
   useEffect(() => {
-    const saved = localStorage.getItem("portfolio-theme") as "dark" | "light" | null;
-    if (saved === "light" || saved === "dark") {
-      setTheme(saved);
-    }
+    if (document.documentElement.dataset.theme === "light") setTheme("light");
   }, []);
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("portfolio-theme", theme);
-  }, [theme]);
-
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("portfolio-theme", next);
+    } catch {
+      // Storage blocked (private mode etc.): theme still applies for this visit.
+    }
   };
 
   return (
     <div
-      data-theme={theme}
       className="relative min-h-screen bg-[var(--pf-bg)] text-[var(--pf-fg)] antialiased font-sans selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)] overflow-x-hidden"
     >
       <ScrollProgressBar />
@@ -733,7 +732,7 @@ function Skills() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-6"
           >
             Skills
           </motion.span>
@@ -822,7 +821,7 @@ function Process() {
           transition={{ duration: 0.7 }}
           className="md:absolute top-10 left-0 md:w-[460px] z-20 mb-16 md:mb-0"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-6">
             Process
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight">
@@ -1029,7 +1028,7 @@ function Experience() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-6"
           >
             Experience
           </motion.span>
@@ -1150,7 +1149,7 @@ function Projects() {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
+          className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-6"
         >
           Selected Work
         </motion.span>
@@ -1600,7 +1599,7 @@ function MilestoneSection({
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-6"
           >
             {eyebrow}
           </motion.span>
@@ -1662,6 +1661,14 @@ const certifications = [
     link: "https://learn.microsoft.com/en-us/users/abdullah-1952/credentials/b636c337abd0aeec",
     image: githubFoundationsCert,
   },
+  {
+    tag: "Skill Badges",
+    title: "Google Skills Profile",
+    org: "Google Cloud · Google Skills",
+    body: "Completed 25 skill badges across AI, Machine Learning, Cloud, and other Google services, each earned through hands-on labs and challenge assessments.",
+    link: "https://www.skills.google/public_profiles/357ec843-643c-4e7e-8d38-4c640348f205",
+    cover: { source: "Google Skills", text: "25 Skill Badges" },
+  },
 ];
 
 function Certifications() {
@@ -1673,9 +1680,9 @@ function Certifications() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-6"
           >
-            Credentials
+            Proven Skills
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -1712,6 +1719,23 @@ function Certifications() {
                     loading="lazy"
                     className="block w-full h-auto transition duration-500 group-hover/cert:scale-105"
                   />
+                </a>
+              )}
+              {c.cover && (
+                <a
+                  href={c.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`View ${c.title}`}
+                  className="group/cover -mx-2 -mt-2 mb-7 flex aspect-[1345/574] flex-col justify-between overflow-hidden rounded-xl border border-black/20 bg-[var(--pf-accent)] p-5 outline-none focus-visible:ring-2 focus-visible:ring-[var(--pf-fg)]"
+                >
+                  <span className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.2em] text-[var(--pf-text-on-accent-muted)]">
+                    {c.cover.source}
+                    <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover/cover:-translate-y-1 group-hover/cover:translate-x-1" />
+                  </span>
+                  <span className="text-2xl md:text-3xl font-black leading-[0.95] tracking-tight text-white">
+                    {c.cover.text}
+                  </span>
                 </a>
               )}
               <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
@@ -1771,7 +1795,7 @@ function Education() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg-dim)] mb-6"
+            className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-6"
           >
             Education
           </motion.span>

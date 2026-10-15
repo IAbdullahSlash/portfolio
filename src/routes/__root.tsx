@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
@@ -16,12 +16,6 @@ import tabIcon from "@/assets/tab.png";
 
 function NotFoundComponent() {
   const { pathname } = useLocation();
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("portfolio-theme");
-    if (saved === "light" || saved === "dark") setTheme(saved);
-  }, []);
 
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: 24 },
@@ -31,7 +25,6 @@ function NotFoundComponent() {
 
   return (
     <div
-      data-theme={theme}
       className="relative flex min-h-screen flex-col overflow-hidden bg-[var(--pf-bg)] px-6 font-sans text-[var(--pf-fg)] antialiased selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)]"
       style={{
         backgroundImage:
@@ -169,10 +162,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const THEME_SCRIPT = "try{var t=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}";
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
+        {/* Apply the saved theme before first paint; dark unless the visitor chose light. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <HeadContent />
       </head>
       <body>

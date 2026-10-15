@@ -247,34 +247,7 @@
 }
 
 /* ── Portfolio light / dark theme tokens ── */
-:root {
-  --pf-bg: #ffffff;
-  --pf-fg: #0a0a0a;
-  --pf-fg-muted: rgba(0, 0, 0, 0.75);
-  --pf-fg-subtle: rgba(0, 0, 0, 0.6);
-  --pf-fg-dim: rgba(0, 0, 0, 0.45);
-  --pf-accent: #ff2a2a;
-  --pf-accent-soft: rgba(255, 42, 42, 0.15);
-  --pf-accent-border: rgba(255, 42, 42, 0.5);
-  --pf-accent-glow: rgba(255, 42, 42, 0.3);
-  --pf-card-bg: rgba(0, 0, 0, 0.04);
-  --pf-card-border: rgba(0, 0, 0, 0.18);
-  --pf-card-border-hover: rgba(255, 42, 42, 0.35);
-  --pf-glass-bg: rgba(255, 255, 255, 0.85);
-  --pf-glass-bg-solid: rgba(255, 255, 255, 0.98);
-  --pf-glass-border: rgba(0, 0, 0, 0.15);
-  --pf-glass-border-strong: rgba(0, 0, 0, 0.22);
-  --pf-grid: rgba(0, 0, 0, 0.06);
-  --pf-line: rgba(0, 0, 0, 0.15);
-  --pf-text-on-accent: #ffffff;
-  --pf-text-on-accent-muted: rgba(255, 255, 255, 0.65);
-  --pf-text-on-accent-subtle: rgba(255, 255, 255, 0.55);
-  --pf-text-on-accent-soft: rgba(255, 255, 255, 0.95);
-  --pf-shadow: rgba(0, 0, 0, 0.1);
-  --pf-shadow-strong: rgba(0, 0, 0, 0.15);
-  --pf-shadow-xl: rgba(0, 0, 0, 0.2);
-}
-
+:root,
 [data-theme="dark"] {
   --pf-bg: #000000;
   --pf-fg: #ffffff;
@@ -301,4 +274,32 @@
   --pf-shadow: rgba(0, 0, 0, 0.3);
   --pf-shadow-strong: rgba(0, 0, 0, 0.4);
   --pf-shadow-xl: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] {
+  --pf-bg: #ffffff;
+  --pf-fg: #0a0a0a;
+  --pf-fg-muted: rgba(0, 0, 0, 0.75);
+  --pf-fg-subtle: rgba(0, 0, 0, 0.6);
+  --pf-fg-dim: rgba(0, 0, 0, 0.45);
+  --pf-accent: #ff2a2a;
+  --pf-accent-soft: rgba(255, 42, 42, 0.15);
+  --pf-accent-border: rgba(255, 42, 42, 0.5);
+  --pf-accent-glow: rgba(255, 42, 42, 0.3);
+  --pf-card-bg: rgba(0, 0, 0, 0.04);
+  --pf-card-border: rgba(0, 0, 0, 0.18);
+  --pf-card-border-hover: rgba(255, 42, 42, 0.35);
+  --pf-glass-bg: rgba(255, 255, 255, 0.85);
+  --pf-glass-bg-solid: rgba(255, 255, 255, 0.98);
+  --pf-glass-border: rgba(0, 0, 0, 0.15);
+  --pf-glass-border-strong: rgba(0, 0, 0, 0.22);
+  --pf-grid: rgba(0, 0, 0, 0.06);
+  --pf-line: rgba(0, 0, 0, 0.15);
+  --pf-text-on-accent: #ffffff;
+  --pf-text-on-accent-muted: rgba(255, 255, 255, 0.65);
+  --pf-text-on-accent-subtle: rgba(255, 255, 255, 0.55);
+  --pf-text-on-accent-soft: rgba(255, 255, 255, 0.95);
+  --pf-shadow: rgba(0, 0, 0, 0.1);
+  --pf-shadow-strong: rgba(0, 0, 0, 0.15);
+  --pf-shadow-xl: rgba(0, 0, 0, 0.2);
 }
