@@ -1121,11 +1121,11 @@ const projects = [
   },
   {
     n: "02",
-    tag: "Intelligent Validation Engine",
-    name: "ProtoEngine",
-    subtitle: "Idea Evaluator & feasibility engine",
-    body: "A full-stack AI-powered idea validation system that analyses user concepts, evaluates feasibility, and generates structured execution roadmaps using intelligent decision-making workflows and automated planning mechanisms.",
-    tech: ["React", "Python", "Supabase", "LangChain", "PHI-4"],
+    tag: "MCP Connector · Idea Evaluation",
+    name: "Idea-Evaluator",
+    subtitle: "Project ideas, marked like an exam answer",
+    body: "A Model Context Protocol tool designed to plug into your everyday AI assistant such as ChatGPT, Claude, Gemini, or Cursor and act as an Idea-Evaluator with your AI and help you to test your ideas, brainstorm better, research more, have a bigger context window and provide broader and grounded answers.",
+    tech: ["Next.js", "TypeScript", "MCP", "Gemini", "Upstash Redis", "Tailwind CSS"],
     accent: RED,
     live: "https://idea-evaluator-slash.vercel.app/",
   },
@@ -1137,7 +1137,7 @@ const projects = [
     body: "AI powered personal finance platform that creates a Digital Financial Twin to simulate financial decisions before they happen. Uses spending behavior, financial goals, and predictive analytics to help users compare scenarios and make smarter, data driven financial decisions.",
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     accent: RED,
-    live: "https://finance-twin.vercel.app",
+    live: "https://finance-twin.vercel.app/",
   },
 ];
 
