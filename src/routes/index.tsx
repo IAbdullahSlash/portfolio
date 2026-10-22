@@ -9,14 +9,14 @@ import {
   useAnimate,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
-import profilePic from "@/assets/abdullah.jpg";
-import hackvedaCertificate from "@/assets/hackveda/certificate.jpg";
-import hackvedaTeam from "@/assets/hackveda/team.jpg";
-import hackvedaWinner from "@/assets/hackveda/winner.jpg";
-import hackvedaWork from "@/assets/hackveda/work.jpg";
-import smartIndiaTeam from "@/assets/internal-sih/team-win.jfif";
-import gdgTeam from "@/assets/gdg/gdg-team.jpeg";
-import githubFoundationsCert from "@/assets/Foundations.jpg";
+import profilePic from "@/assets/abdullah.webp";
+import hackvedaCertificate from "@/assets/hackveda/certificate.webp";
+import hackvedaTeam from "@/assets/hackveda/team.webp";
+import hackvedaWinner from "@/assets/hackveda/winner.webp";
+import hackvedaWork from "@/assets/hackveda/work.webp";
+import smartIndiaTeam from "@/assets/internal-sih/team-win.webp";
+import gdgTeam from "@/assets/gdg/gdg-team.webp";
+import githubFoundationsCert from "@/assets/Foundations.webp";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
 import { SITE_URL } from "@/lib/site";
 

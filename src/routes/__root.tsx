@@ -12,7 +12,8 @@ import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
-import tabIcon from "@/assets/tab.png";
+import favicon from "@/assets/icons/favicon.png";
+import appleTouchIcon from "@/assets/icons/apple-touch-icon.png";
 import { SITE_URL } from "@/lib/site";
 
 function NotFoundComponent() {
@@ -162,8 +163,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: tabIcon, type: "image/png" },
-      { rel: "apple-touch-icon", href: tabIcon },
+      { rel: "icon", href: favicon, type: "image/png", sizes: "64x64" },
+      { rel: "apple-touch-icon", href: appleTouchIcon, sizes: "180x180" },
     ],
   }),
   shellComponent: RootShell,
