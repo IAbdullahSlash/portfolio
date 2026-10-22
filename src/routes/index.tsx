@@ -18,24 +18,21 @@ import smartIndiaTeam from "@/assets/internal-sih/team-win.jfif";
 import gdgTeam from "@/assets/gdg/gdg-team.jpeg";
 import githubFoundationsCert from "@/assets/Foundations.jpg";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
+import { SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Abdullah Azmi" },
-      {
-        name: "description",
-        content:
-          "Portfolio of Abdullah Azmi — AI Engineer & Full Stack Developer building intelligent, scalable applications.",
-      },
-      { property: "og:title", content: "Abdullah Azmi — AI Engineer & Full Stack Developer" },
-      {
-        property: "og:description",
-        content: "AI Engineer & Full Stack Developer. Projects, skills, experience, and contact.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { title: SEO_TITLE },
+      { name: "description", content: SEO_DESCRIPTION },
+      { property: "og:url", content: `${SITE_URL}/` },
+      { property: "og:title", content: SEO_TITLE },
+      { property: "og:description", content: SEO_DESCRIPTION },
+      { name: "twitter:title", content: SEO_TITLE },
+      { name: "twitter:description", content: SEO_DESCRIPTION },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(STRUCTURED_DATA) }],
   }),
   component: Portfolio,
 });
@@ -56,6 +53,50 @@ const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent
 const PROFILE_PIC = profilePic;
 
 const RED = "#ff2a2a";
+
+const SEO_TITLE = "Abdullah Azmi | AI Engineer & Full Stack Developer";
+const SEO_DESCRIPTION =
+  "AI Engineer & Full Stack Developer. Explore Abdullah Azmi's projects, hackathon wins, publications and certifications.";
+
+// schema.org data so search engines can tie the name to this site and the linked profiles.
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: "Abdullah Azmi",
+      url: `${SITE_URL}/`,
+      image: `${SITE_URL}/og-image.jpg`,
+      jobTitle: "AI Engineer & Full Stack Developer",
+      email: `mailto:${EMAIL}`,
+      affiliation: { "@type": "CollegeOrUniversity", name: "Integral University, Lucknow" },
+      knowsAbout: [
+        "Artificial Intelligence",
+        "Machine Learning",
+        "Large Language Models",
+        "Model Context Protocol",
+        "Full Stack Development",
+        "React",
+        "TypeScript",
+        "Python",
+      ],
+      sameAs: [
+        GITHUB_URL,
+        LINKEDIN_URL,
+        "https://abdullahslash.substack.com",
+        "https://www.skills.google/public_profiles/357ec843-643c-4e7e-8d38-4c640348f205",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      name: "Abdullah Azmi",
+      url: `${SITE_URL}/`,
+      author: { "@id": `${SITE_URL}/#person` },
+    },
+  ],
+};
 
 function Portfolio() {
   const [introDone, setIntroDone] = useState(false);
@@ -131,19 +172,20 @@ function ScrollProgressBar() {
 function Intro() {
   return (
     <motion.div
+      aria-hidden
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
       className="fixed inset-0 z-[100] flex items-center justify-center"
       style={{ background: "var(--pf-accent)" }}
     >
-      <motion.h1
+      <motion.p
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="text-5xl md:text-7xl font-black tracking-tight text-white"
       >
         Abdullah Azmi<span className="text-black">.</span>
-      </motion.h1>
+      </motion.p>
     </motion.div>
   );
 }

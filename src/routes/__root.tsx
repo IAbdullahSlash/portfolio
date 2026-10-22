@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import tabIcon from "@/assets/tab.png";
+import { SITE_URL } from "@/lib/site";
 
 function NotFoundComponent() {
   const { pathname } = useLocation();
@@ -138,14 +139,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Abdullah's Portfolio" },
-      { name: "description", content: "Portfolio Project" },
+      { title: "Abdullah Azmi | AI Engineer & Full Stack Developer" },
+      {
+        name: "description",
+        content:
+          "Portfolio of Abdullah Azmi, an AI Engineer and Full Stack Developer building intelligent, scalable applications.",
+      },
       { name: "author", content: "Abdullah Azmi" },
-      { property: "og:title", content: "Abdullah's Portfolio" },
-      { property: "og:description", content: "Portfolio Project" },
+      { name: "theme-color", content: "#000000" },
+      { property: "og:site_name", content: "Abdullah Azmi" },
+      { property: "og:locale", content: "en_US" },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: `${SITE_URL}/og-image.jpg` },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Abdullah Azmi, AI Engineer & Full Stack Developer" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@AbdullahAzmi" },
+      { name: "twitter:image", content: `${SITE_URL}/og-image.jpg` },
     ],
     links: [
       {
