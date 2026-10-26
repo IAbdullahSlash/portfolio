@@ -17,6 +17,7 @@ import hackvedaWork from "@/assets/hackveda/work.webp";
 import smartIndiaTeam from "@/assets/internal-sih/team-win.webp";
 import gdgTeam from "@/assets/gdg/gdg-team.webp";
 import githubFoundationsCert from "@/assets/Foundations.webp";
+import mongodbDataModelerCert from "@/assets/mongodb-data-modeler.webp";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
 import { SITE_URL } from "@/lib/site";
 
@@ -1702,6 +1703,14 @@ const certifications = [
     body: "A certification that validates my Git and GitHub fundamentals, including version control, collaboration, and CI/CD workflows. Basically, the skills behind how I build, collaborate, and ship code.",
     link: "https://learn.microsoft.com/en-us/users/abdullah-1952/credentials/b636c337abd0aeec",
     image: githubFoundationsCert,
+  },
+  {
+    tag: "Certified",
+    title: "MongoDB Associate Data Modeler",
+    org: "MongoDB · Credly",
+    body: "Validates my ability to design MongoDB data models: choosing between embedding and referencing, applying schema design patterns, and modelling data around how an application reads and writes it.",
+    link: "https://www.credly.com/badges/f1af7b9b-1d86-45f7-9d3c-f3c951ca03a1/public_url",
+    image: mongodbDataModelerCert,
   },
   {
     tag: "Skill Badges",
