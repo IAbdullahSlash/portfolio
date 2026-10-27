@@ -20,6 +20,7 @@ import githubFoundationsCert from "@/assets/Foundations.webp";
 import mongodbDataModelerCert from "@/assets/mongodb-data-modeler.webp";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
 import { SITE_URL } from "@/lib/site";
+import { WebShotLink } from "@/components/web-shot-link";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -418,18 +419,10 @@ function Hero() {
             transition={{ delay: 2.7, duration: 0.6 }}
             className="mt-8 flex flex-wrap items-center gap-4"
           >
-            <a
-              href="#projects"
-              className="px-6 py-3 rounded-full bg-[var(--pf-fg)] text-[var(--pf-bg)] text-sm font-semibold hover:opacity-90 transition"
-            >
+            <WebShotLink href="#projects" variant="solid">
               View My Work
-            </a>
-            <a
-              href="#contact"
-              className="px-6 py-3 rounded-full border border-[var(--pf-glass-border-strong)] text-sm font-semibold hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
-            >
-              Contact Me
-            </a>
+            </WebShotLink>
+            <WebShotLink href="#contact">Contact Me</WebShotLink>
           </motion.div>
         </div>
 
@@ -1919,25 +1912,14 @@ function Contact() {
         </p>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <a
-            href={GMAIL_COMPOSE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-[var(--pf-text-on-accent)] text-sm font-semibold transition"
-            style={{ background: "var(--pf-accent)" }}
-          >
+          <WebShotLink href={GMAIL_COMPOSE_URL} target="_blank" rel="noreferrer" size="lg" variant="accent">
             <MailIcon className="w-5 h-5" />
             Email me
-          </a>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-[var(--pf-card-border)] text-sm font-semibold hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
-          >
+          </WebShotLink>
+          <WebShotLink href={WHATSAPP_URL} target="_blank" rel="noreferrer" size="lg">
             <WhatsAppIcon className="w-5 h-5" />
             WhatsApp
-          </a>
+          </WebShotLink>
         </div>
 
         <div className="mt-10 flex items-center justify-center gap-4">
