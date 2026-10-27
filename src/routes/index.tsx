@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type Dispatch, type RefObject, type SetStateAction } from "react";
 import {
   motion,
   AnimatePresence,
@@ -18,6 +18,8 @@ import smartIndiaTeam from "@/assets/internal-sih/team-win.webp";
 import gdgTeam from "@/assets/gdg/gdg-team.webp";
 import githubFoundationsCert from "@/assets/Foundations.webp";
 import mongodbDataModelerCert from "@/assets/mongodb-data-modeler.webp";
+import ideaEvaluatorShot from "@/assets/projects/idea-evaluator.webp";
+import financeTwinShot from "@/assets/projects/finance-twin.webp";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
 import { SITE_URL } from "@/lib/site";
 import { WebShotLink } from "@/components/web-shot-link";
@@ -111,13 +113,26 @@ function Portfolio() {
 
   // Pointer position for the .glow-card spotlight (viewport coords, read by fixed backgrounds).
   useEffect(() => {
+    // Batched to one write per frame: each write restyles the whole page.
     const root = document.documentElement;
-    const onMove = (e: PointerEvent) => {
-      root.style.setProperty("--glow-x", `${e.clientX}px`);
-      root.style.setProperty("--glow-y", `${e.clientY}px`);
+    let x = 0;
+    let y = 0;
+    let raf = 0;
+    const write = () => {
+      raf = 0;
+      root.style.setProperty("--glow-x", `${x}px`);
+      root.style.setProperty("--glow-y", `${y}px`);
     };
-    document.addEventListener("pointermove", onMove);
-    return () => document.removeEventListener("pointermove", onMove);
+    const onMove = (e: PointerEvent) => {
+      x = e.clientX;
+      y = e.clientY;
+      if (!raf) raf = requestAnimationFrame(write);
+    };
+    document.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      document.removeEventListener("pointermove", onMove);
+    };
   }, []);
 
   // RootShell applies the saved theme to <html> before first paint; sync the toggle with it.
@@ -1164,6 +1179,7 @@ const projects = [
     tech: ["Next.js", "TypeScript", "MCP", "Gemini", "Upstash Redis", "Tailwind CSS"],
     accent: RED,
     live: "https://idea-evaluator-slash.vercel.app/",
+    image: ideaEvaluatorShot,
   },
   {
     n: "03",
@@ -1174,10 +1190,118 @@ const projects = [
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     accent: RED,
     live: "https://finance-twin.vercel.app/",
+    image: financeTwinShot,
   },
 ];
 
+type Project = (typeof projects)[number] & { live?: string; image?: string };
+
+const PREVIEW_W = 320;
+const PREVIEW_H = 200;
+
+type PreviewApi = { show: (index: number | null) => void };
+
+/*
+ * Floating preview that trails the pointer while a project card is hovered.
+ * Driven straight through the DOM (no React state), so hovering never re-renders the cards.
+ */
+function ProjectPreview({ api }: { api: RefObject<PreviewApi | null> }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    const box = boxRef.current;
+    if (!el || !box) return;
+    const layers = [...box.querySelectorAll<HTMLElement>("[data-layer]")];
+    const target = { x: 0, y: 0 };
+    const pos = { x: 0, y: 0 };
+    let active: number | null = null;
+    let raf = 0;
+
+    const place = () => {
+      // Flip to the left of the pointer when there is no room on the right.
+      const x = pos.x + 20 + PREVIEW_W > window.innerWidth - 16 ? pos.x - PREVIEW_W - 20 : pos.x + 20;
+      el.style.transform = `translate3d(${x}px, ${pos.y - 100}px, 0)`;
+    };
+    const tick = () => {
+      pos.x += (target.x - pos.x) * 0.35;
+      pos.y += (target.y - pos.y) * 0.35;
+      place();
+      raf = Math.abs(target.x - pos.x) + Math.abs(target.y - pos.y) > 0.5 ? requestAnimationFrame(tick) : 0;
+    };
+    const onMove = (e: PointerEvent) => {
+      target.x = e.clientX;
+      target.y = e.clientY;
+      // While hidden, jump straight to the pointer so it never flies in from the last spot.
+      if (active === null) {
+        pos.x = target.x;
+        pos.y = target.y;
+        place();
+        return;
+      }
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    api.current = {
+      show(index) {
+        if (index === active) return;
+        active = index;
+        box.dataset.visible = String(index !== null);
+        layers.forEach((layer, i) => (layer.dataset.on = String(i === index)));
+      },
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+      api.current = null;
+    };
+  }, [api]);
+
+  return (
+    <div
+      ref={ref}
+      aria-hidden
+      className="pointer-events-none fixed left-0 top-0 z-50 hidden will-change-transform [@media(pointer:fine)]:block"
+    >
+      <div
+        ref={boxRef}
+        data-visible="false"
+        className="relative overflow-hidden rounded-xl border border-[var(--pf-card-border)] bg-[var(--pf-bg)] shadow-2xl opacity-0 scale-90 transition-[opacity,scale] duration-150 ease-out data-[visible=true]:opacity-100 data-[visible=true]:scale-100"
+        style={{ width: PREVIEW_W, height: PREVIEW_H }}
+      >
+        {(projects as Project[]).map((p) => {
+          const layer =
+            "absolute inset-0 opacity-0 scale-105 transition-[opacity,scale] duration-200 ease-out data-[on=true]:opacity-100 data-[on=true]:scale-100";
+          return p.image ? (
+            <img
+              key={p.name}
+              data-layer
+              src={p.image}
+              alt=""
+              decoding="async"
+              className={`${layer} h-full w-full object-cover object-top`}
+            />
+          ) : (
+            <div key={p.name} data-layer className={`${layer} flex flex-col justify-end p-6`}>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--pf-fg-subtle)]">{p.tag}</span>
+              <span className="mt-2 text-3xl font-black leading-[0.95] tracking-tight" style={{ color: "var(--pf-accent)" }}>
+                {p.name}
+              </span>
+            </div>
+          );
+        })}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+      </div>
+    </div>
+  );
+}
+
 function Projects() {
+  const preview = useRef<PreviewApi | null>(null);
+
   return (
     <section id="projects" className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
       <div className="max-w-6xl mx-auto px-6 pt-32 pb-16">
@@ -1205,9 +1329,16 @@ function Projects() {
 
       <div className="relative">
         {projects.map((p, i) => (
-          <ProjectCard key={p.name} project={p} index={i} total={projects.length} />
+          <ProjectCard
+            key={p.name}
+            project={p}
+            index={i}
+            total={projects.length}
+            onHover={(on) => preview.current?.show(on ? i : null)}
+          />
         ))}
       </div>
+      <ProjectPreview api={preview} />
     </section>
   );
 }
@@ -1216,10 +1347,12 @@ function ProjectCard({
   project,
   index,
   total,
+  onHover,
 }: {
-  project: (typeof projects)[number];
+  project: Project;
   index: number;
   total: number;
+  onHover: (on: boolean) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -1242,7 +1375,9 @@ function ProjectCard({
           background: isRed ? "var(--pf-accent)" : "var(--pf-card-bg)",
           borderColor: isRed ? "rgba(0,0,0,0.2)" : "var(--pf-card-border)",
         }}
-        className="max-w-6xl mx-auto my-6 rounded-3xl border p-8 md:p-14 grid md:grid-cols-[1fr_auto] gap-8 items-end shadow-[0_15px_40px_var(--pf-shadow-xl)]"
+        onPointerEnter={(e) => e.pointerType === "mouse" && onHover(true)}
+        onPointerLeave={() => onHover(false)}
+        className="group max-w-6xl mx-auto my-6 rounded-3xl border p-8 md:p-14 grid md:grid-cols-[1fr_auto] gap-8 items-end shadow-[0_15px_40px_var(--pf-shadow-xl)]"
       >
         <div>
           <div className="flex items-center gap-3 mb-6">
@@ -1256,8 +1391,15 @@ function ProjectCard({
               Project {project.n} / {String(total).padStart(2, "0")}
             </span>
           </div>
-          <h3 className="text-4xl md:text-6xl font-black tracking-tight leading-[0.95] text-white">
-            {project.name}
+          <h3 className="inline-flex items-center gap-3 text-4xl md:text-6xl font-black tracking-tight leading-[0.95] text-white">
+            <span className="relative inline-block">
+              {project.name}
+              <span className="absolute left-0 -bottom-1 h-[3px] w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100" />
+            </span>
+            <ArrowUpRight
+              aria-hidden
+              className="h-8 w-8 md:h-12 md:w-12 shrink-0 opacity-0 -translate-x-2 translate-y-2 transition-[opacity,translate] duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
+            />
           </h3>
           <p className={`mt-3 text-lg md:text-xl font-medium ${isRed ? "text-[var(--pf-text-on-accent)]" : "text-[var(--pf-fg-muted)]"}`}>
             {project.subtitle}
@@ -1281,7 +1423,7 @@ function ProjectCard({
           </div>
         </div>
         <div className="flex md:flex-col gap-3 md:items-end">
-          {"live" in project && project.live ? (
+          {project.live ? (
             <a
               href={project.live}
               target="_blank"
