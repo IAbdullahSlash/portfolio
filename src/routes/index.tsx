@@ -23,6 +23,7 @@ import financeTwinShot from "@/assets/projects/finance-twin.webp";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
 import { SITE_URL } from "@/lib/site";
 import { WebShotLink } from "@/components/web-shot-link";
+import ContributionSkyline, { type ContributionDay } from "@/components/contribution-skyline";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -1339,7 +1340,128 @@ function Projects() {
         ))}
       </div>
       <ProjectPreview api={preview} />
+      <GithubActivity />
     </section>
+  );
+}
+
+// Public, keyless mirror of the GitHub contribution calendar (CORS-enabled).
+const CONTRIBUTIONS_URL = "https://github-contributions-api.jogruber.de/v4/IAbdullahSlash";
+// First year with contributions on the profile.
+const FIRST_ACTIVITY_YEAR = 2023;
+// "Last 12 months", then every finished year back to the first one; a new year shows up on its own.
+const ACTIVITY_PERIODS = [
+  "last",
+  ...Array.from({ length: Math.max(0, new Date().getFullYear() - FIRST_ACTIVITY_YEAR) }, (_, i) =>
+    String(new Date().getFullYear() - 1 - i),
+  ),
+];
+type ActivityPeriod = string;
+
+function GithubActivity() {
+  const [period, setPeriod] = useState<ActivityPeriod>("last");
+  // The period on screen; it only changes once that period's data has arrived, so the chart never blanks.
+  const [shown, setShown] = useState<{ period: ActivityPeriod; data: ContributionDay[] } | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [view, setView] = useState<"2d" | "3d">("3d");
+  const cache = useRef(new Map<ActivityPeriod, ContributionDay[]>());
+
+  useEffect(() => {
+    const cached = cache.current.get(period);
+    if (cached) {
+      setShown({ period, data: cached });
+      return;
+    }
+    const ctrl = new AbortController();
+    fetch(`${CONTRIBUTIONS_URL}?y=${period}`, { signal: ctrl.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((d: { contributions: ContributionDay[] }) => {
+        const days = d.contributions.map(({ date, count }) => ({ date, count }));
+        cache.current.set(period, days);
+        setShown({ period, data: days });
+      })
+      .catch(() => {
+        if (!ctrl.signal.aborted) setFailed(true);
+      });
+    return () => ctrl.abort();
+  }, [period]);
+
+  // Rather show nothing than an empty or fake graph.
+  if (failed) return null;
+
+  const isYear = shown && shown.period !== "last";
+  const loading = shown?.period !== period;
+
+  return (
+    <div className="max-w-6xl mx-auto px-6 pt-20 pb-24">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <span className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-5">
+            GitHub Activity
+          </span>
+          <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-[0.95]">
+            Shipping, <span style={{ color: "var(--pf-accent)" }}>all the time</span>
+          </h3>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div
+            role="group"
+            aria-label="Contribution period"
+            className="inline-flex flex-wrap rounded-full border border-[var(--pf-card-border)] p-1"
+          >
+            {ACTIVITY_PERIODS.map((p) => (
+              <button
+                key={p}
+                type="button"
+                aria-pressed={period === p}
+                onClick={() => setPeriod(p)}
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold tabular-nums transition ${
+                  period === p
+                    ? "bg-[var(--pf-fg)] text-[var(--pf-bg)]"
+                    : "text-[var(--pf-fg-muted)] hover:text-[var(--pf-fg)]"
+                }`}
+              >
+                {p === "last" ? "Last 12 months" : p}
+              </button>
+            ))}
+          </div>
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--pf-fg-muted)] hover:text-[var(--pf-fg)] transition"
+          >
+            View GitHub profile
+            <ArrowUpRight className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+      {shown ? (
+        <div className={`transition-opacity duration-300 ${loading ? "opacity-50" : "opacity-100"}`}>
+          {/* Keyed by period so each year rises out of the flat map again. */}
+          <ContributionSkyline
+            key={shown.period}
+            data={shown.data}
+            endDate={isYear ? `${shown.period}-12-31` : undefined}
+            view={view}
+            onViewChange={setView}
+            streakLabel={isYear ? "Year-end streak" : "Current streak"}
+            title={
+              isYear ? (
+                <>
+                  <span className="font-semibold tabular-nums">
+                    {shown.data.reduce((sum, d) => sum + d.count, 0).toLocaleString("en-US")}
+                  </span>{" "}
+                  contributions in {shown.period}
+                </>
+              ) : undefined
+            }
+          />
+        </div>
+      ) : (
+        <div className="h-[320px] rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] animate-pulse" />
+      )}
+    </div>
   );
 }
 
