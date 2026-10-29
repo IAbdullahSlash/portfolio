@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 
+import { toRGB, type RGB } from "@/lib/color";
+
 /* ==========================================================================
    Halftone Wordmark
 
@@ -13,8 +15,6 @@ import { useEffect, useRef } from "react";
    when <html data-theme> changes. The block sets its own height from the
    width so the word always fits.
    ========================================================================== */
-
-type RGB = [number, number, number];
 
 /** Dot radius for a cell coverage in [0, 1]: area-true, so tone stays even. */
 function dotRadius(coverage: number, gap: number) {
@@ -46,23 +46,6 @@ function step(
   vx = (vx + (hx - x) * 0.05) * 0.84;
   vy = (vy + (hy - y) * 0.05) * 0.84;
   return [x + vx, y + vy, vx, vy];
-}
-
-// Any CSS colour → sRGB, by letting the browser paint it.
-let probe: CanvasRenderingContext2D | null = null;
-function toRGB(color: string, fallback: RGB): RGB {
-  if (!probe) {
-    const c = document.createElement("canvas");
-    c.width = c.height = 1;
-    probe = c.getContext("2d", { willReadFrequently: true });
-  }
-  if (!probe || !color) return fallback;
-  probe.clearRect(0, 0, 1, 1);
-  probe.fillStyle = "rgba(0,0,0,0)";
-  probe.fillStyle = color;
-  probe.fillRect(0, 0, 1, 1);
-  const d = probe.getImageData(0, 0, 1, 1).data;
-  return d[3] < 8 ? fallback : [d[0], d[1], d[2]];
 }
 
 export function HalftoneWordmark({
@@ -115,8 +98,8 @@ export function HalftoneWordmark({
 
     const readColors = () => {
       const cs = getComputedStyle(root);
-      ink = toRGB(cs.getPropertyValue("--pf-fg").trim(), ink);
-      warm = toRGB(cs.getPropertyValue("--pf-accent").trim(), warm);
+      ink = toRGB(cs.getPropertyValue("--pf-fg").trim()) ?? ink;
+      warm = toRGB(cs.getPropertyValue("--pf-accent").trim()) ?? warm;
     };
 
     const layout = () => {

@@ -1,5 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type Dispatch, type RefObject, type SetStateAction } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type RefObject,
+  type SetStateAction,
+} from "react";
 import {
   motion,
   AnimatePresence,
@@ -21,10 +28,19 @@ import githubFoundationsCert from "@/assets/Foundations.webp";
 import mongodbDataModelerCert from "@/assets/mongodb-data-modeler.webp";
 import ideaEvaluatorShot from "@/assets/projects/idea-evaluator.webp";
 import financeTwinShot from "@/assets/projects/finance-twin.webp";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Moon,
+  Sun,
+  X,
+} from "lucide-react";
 import { SITE_URL } from "@/lib/site";
 import { WebShotLink } from "@/components/web-shot-link";
-import ContributionSkyline, { type ContributionDay } from "@/components/contribution-skyline";
+import ContributionSkyline, {
+  type ContributionDay,
+} from "@/components/contribution-skyline";
 import { HalftoneWordmark } from "@/components/halftone-wordmark";
 
 export const Route = createFileRoute("/")({
@@ -39,7 +55,12 @@ export const Route = createFileRoute("/")({
       { name: "twitter:description", content: SEO_DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/` }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify(STRUCTURED_DATA) }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(STRUCTURED_DATA),
+      },
+    ],
   }),
   component: Portfolio,
 });
@@ -49,17 +70,14 @@ const LINKEDIN_URL = "https://www.linkedin.com/in/abdullahslash";
 const EMAIL = "abdullahaz7677@gmail.com";
 const PHONE = "+91 8756857677";
 const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
-  EMAIL
+  EMAIL,
 )}&su=${encodeURIComponent("Hiring Inquiry – Portfolio")}&body=${encodeURIComponent(
-  "Hello Abdullah,\n\nI came across your portfolio and would like to discuss an opportunity with you.\n\nLooking forward to hearing from you.\nBest Regards,"
+  "Hello Abdullah,\n\nI came across your portfolio and would like to discuss an opportunity with you.\n\nLooking forward to hearing from you.\nBest Regards,",
 )}`;
 const WHATSAPP_NUMBER = PHONE.replace(/[^\d]/g, "");
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  "Hi Abdullah, I came across your portfolio and would like to connect!"
+  "Hi Abdullah, I came across your portfolio and would like to connect!",
 )}`;
-const PROFILE_PIC = profilePic;
-
-const RED = "#ff2a2a";
 
 const SEO_TITLE = "Abdullah Azmi | AI Engineer & Full Stack Developer";
 const SEO_DESCRIPTION =
@@ -77,7 +95,10 @@ const STRUCTURED_DATA = {
       image: `${SITE_URL}/og-image.jpg`,
       jobTitle: "AI Engineer & Full Stack Developer",
       email: `mailto:${EMAIL}`,
-      affiliation: { "@type": "CollegeOrUniversity", name: "Integral University, Lucknow" },
+      affiliation: {
+        "@type": "CollegeOrUniversity",
+        name: "Integral University, Lucknow",
+      },
       knowsAbout: [
         "Artificial Intelligence",
         "Machine Learning",
@@ -155,9 +176,7 @@ function Portfolio() {
   };
 
   return (
-    <div
-      className="relative min-h-screen bg-[var(--pf-bg)] text-[var(--pf-fg)] antialiased font-sans selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)] overflow-x-hidden"
-    >
+    <div className="relative min-h-screen bg-[var(--pf-bg)] text-[var(--pf-fg)] antialiased font-sans selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)] overflow-x-hidden">
       <ScrollProgressBar />
       <AnimatePresence>{!introDone && <Intro />}</AnimatePresence>
       <Nav theme={theme} onToggleTheme={toggleTheme} />
@@ -183,7 +202,11 @@ function ScrollProgressBar() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
   return (
     <motion.div
-      style={{ scaleX, background: "var(--pf-accent)", transformOrigin: "0% 50%" }}
+      style={{
+        scaleX,
+        background: "var(--pf-accent)",
+        transformOrigin: "0% 50%",
+      }}
       className="fixed top-0 left-0 right-0 h-[3px] z-[90]"
     />
   );
@@ -210,7 +233,13 @@ function Intro() {
   );
 }
 
-function GithubIcon({ className = "w-5 h-5", fill = "currentColor" }: { className?: string; fill?: string }) {
+function GithubIcon({
+  className = "w-5 h-5",
+  fill = "currentColor",
+}: {
+  className?: string;
+  fill?: string;
+}) {
   return (
     <svg viewBox="0 0 24 24" fill={fill} className={className}>
       <path d="M12 .5C5.73.5.5 5.74.5 12.02c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.87-1.54-3.87-1.54-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.19 1.18a11.1 11.1 0 0 1 5.81 0c2.22-1.49 3.19-1.18 3.19-1.18.63 1.59.23 2.77.12 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.41.35.78 1.05.78 2.11 0 1.52-.01 2.75-.01 3.12 0 .31.21.67.8.56 4.57-1.53 7.86-5.84 7.86-10.93C23.5 5.74 18.27.5 12 .5Z" />
@@ -218,7 +247,13 @@ function GithubIcon({ className = "w-5 h-5", fill = "currentColor" }: { classNam
   );
 }
 
-function LinkedInIcon({ className = "w-5 h-5", fill = "currentColor" }: { className?: string; fill?: string }) {
+function LinkedInIcon({
+  className = "w-5 h-5",
+  fill = "currentColor",
+}: {
+  className?: string;
+  fill?: string;
+}) {
   return (
     <svg viewBox="0 0 24 24" fill={fill} className={className}>
       <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8h4.53v14H.24V8zm7.5 0h4.34v1.92h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V22h-4.53v-6.24c0-1.49-.03-3.4-2.07-3.4-2.08 0-2.4 1.62-2.4 3.3V22H7.74V8z" />
@@ -252,9 +287,16 @@ function WhatsAppIcon({ className = "w-5 h-5" }: { className?: string }) {
   );
 }
 
-function ThemeToggle({ theme, onToggle }: { theme: string; onToggle: () => void }) {
+function ThemeToggle({
+  theme,
+  onToggle,
+}: {
+  theme: string;
+  onToggle: () => void;
+}) {
   const isDark = theme === "dark";
-  const slot = "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300";
+  const slot =
+    "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300";
 
   return (
     <button
@@ -268,14 +310,18 @@ function ThemeToggle({ theme, onToggle }: { theme: string; onToggle: () => void 
       }`}
     >
       <span className="flex justify-between items-center w-full">
-        <span className={`${slot} ${isDark ? "translate-x-0 bg-zinc-800" : "translate-x-8 bg-gray-200"}`}>
+        <span
+          className={`${slot} ${isDark ? "translate-x-0 bg-zinc-800" : "translate-x-8 bg-gray-200"}`}
+        >
           {isDark ? (
             <Moon className="w-4 h-4 text-white" strokeWidth={1.5} />
           ) : (
             <Sun className="w-4 h-4 text-gray-700" strokeWidth={1.5} />
           )}
         </span>
-        <span className={`${slot} ${isDark ? "bg-transparent" : "-translate-x-8"}`}>
+        <span
+          className={`${slot} ${isDark ? "bg-transparent" : "-translate-x-8"}`}
+        >
           {isDark ? (
             <Sun className="w-4 h-4 text-gray-500" strokeWidth={1.5} />
           ) : (
@@ -287,11 +333,20 @@ function ThemeToggle({ theme, onToggle }: { theme: string; onToggle: () => void 
   );
 }
 
-function Nav({ theme, onToggleTheme }: { theme: string; onToggleTheme: () => void }) {
+function Nav({
+  theme,
+  onToggleTheme,
+}: {
+  theme: string;
+  onToggleTheme: () => void;
+}) {
   return (
     <header className="fixed top-4 inset-x-0 z-50 px-4">
       <div className="max-w-5xl mx-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-glass-bg)] backdrop-blur-xl shadow-[0_8px_30px_var(--pf-shadow)]">
-        <a href="#top" className="text-lg font-black tracking-tight shrink-0 text-[var(--pf-fg)]">
+        <a
+          href="#top"
+          className="text-lg font-black tracking-tight shrink-0 text-[var(--pf-fg)]"
+        >
           Abdullah Azmi<span style={{ color: "var(--pf-accent)" }}>.</span>
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--pf-fg-muted)]">
@@ -303,7 +358,11 @@ function Nav({ theme, onToggleTheme }: { theme: string; onToggleTheme: () => voi
             ["Projects", "#projects"],
             ["Contact", "#contact"],
           ].map(([label, href]) => (
-            <a key={label} href={href} className="hover:text-[var(--pf-fg)] transition">
+            <a
+              key={label}
+              href={href}
+              className="hover:text-[var(--pf-fg)] transition"
+            >
               <RandomLetterSwap label={label} />
             </a>
           ))}
@@ -315,12 +374,22 @@ function Nav({ theme, onToggleTheme }: { theme: string; onToggleTheme: () => voi
 }
 
 // On hover, each letter slides up and is replaced by a copy from below, in random order.
-function RandomLetterSwap({ label, stagger = 0.025 }: { label: string; stagger?: number }) {
+function RandomLetterSwap({
+  label,
+  stagger = 0.025,
+}: {
+  label: string;
+  stagger?: number;
+}) {
   const [scope, animate] = useAnimate();
   const running = useRef(false);
 
   const swap = async () => {
-    if (running.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (
+      running.current ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
     running.current = true;
 
     const order = [...label].map((_, i) => i).sort(() => Math.random() - 0.5);
@@ -338,14 +407,21 @@ function RandomLetterSwap({ label, stagger = 0.025 }: { label: string; stagger?:
   };
 
   return (
-    <span ref={scope} onMouseEnter={swap} className="relative inline-flex overflow-hidden">
+    <span
+      ref={scope}
+      onMouseEnter={swap}
+      className="relative inline-flex overflow-hidden"
+    >
       <span className="sr-only">{label}</span>
       {[...label].map((letter, i) => (
         <span key={i} aria-hidden className="relative inline-block">
           <span data-letter={i} className="inline-block">
             {letter}
           </span>
-          <span data-letter={i} className="absolute left-0 top-full inline-block">
+          <span
+            data-letter={i}
+            className="absolute left-0 top-full inline-block"
+          >
             {letter}
           </span>
         </span>
@@ -420,7 +496,8 @@ function Hero() {
           >
             Hi, I'm <FlipText>Abdullah Azmi</FlipText>,
             <br />
-            <span style={{ color: "var(--pf-accent)" }}>AI Engineer</span> & Full Stack Developer
+            <span style={{ color: "var(--pf-accent)" }}>AI Engineer</span> &
+            Full Stack Developer
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -467,14 +544,38 @@ function Hero() {
           >
             <span className="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
               {playing ? (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" />
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  <polygon
+                    points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+                    fill="currentColor"
+                    stroke="none"
+                  />
                   <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
                   <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
                 </svg>
               ) : (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" />
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  <polygon
+                    points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+                    fill="currentColor"
+                    stroke="none"
+                  />
                   <line x1="23" y1="9" x2="17" y2="15" />
                   <line x1="17" y1="9" x2="23" y2="15" />
                 </svg>
@@ -521,7 +622,7 @@ function About() {
         <div className="md:sticky md:top-32">
           <div className="w-full h-[70vh] lg:h-[85vh] mx-auto rounded-3xl bg-white/85 border-2 border-black/20 overflow-hidden shadow-2xl">
             <img
-              src={PROFILE_PIC}
+              src={profilePic}
               alt="Abdullah Azmi"
               className="w-full h-full object-cover"
             />
@@ -576,7 +677,15 @@ function About() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="mt-6 text-lg md:text-xl text-white/95 leading-relaxed"
           >
-            As an <span className="font-black text-black">AI Engineer & Software developer </span> I work under Artificial Intelligence, software engineering, and applied research. I have experience in developing scalable, data driven, and machine learning algorithem applications. I enjoy experimenting with new technologies, and finding smarter ways to solve complex challenges.
+            As an{" "}
+            <span className="font-black text-black">
+              AI Engineer & Software developer{" "}
+            </span>{" "}
+            I work under Artificial Intelligence, software engineering, and
+            applied research. I have experience in developing scalable, data
+            driven, and machine learning algorithem applications. I enjoy
+            experimenting with new technologies, and finding smarter ways to
+            solve complex challenges.
           </motion.p>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -623,10 +732,31 @@ function About() {
 /* TECH MARQUEE                                                      */
 /* ------------------------------------------------------------------ */
 const marqueeTech = [
-  "Python", "TypeScript", "JavaScript", "SQL", "React", "Next.js", "Node.js",
-  "TensorFlow", "Scikit-learn", "LangChain", "LangFlow", "LLaMA", "Gemini",
-  "Pandas", "NumPy", "PyQt5", "FastAPI", "Firebase", "Supabase", "MongoDB",
-  "MySQL", "AWS", "GCP", "Docker", "Git",
+  "Python",
+  "TypeScript",
+  "JavaScript",
+  "SQL",
+  "React",
+  "Next.js",
+  "Node.js",
+  "TensorFlow",
+  "Scikit-learn",
+  "LangChain",
+  "LangFlow",
+  "LLaMA",
+  "Gemini",
+  "Pandas",
+  "NumPy",
+  "PyQt5",
+  "FastAPI",
+  "Firebase",
+  "Supabase",
+  "MongoDB",
+  "MySQL",
+  "AWS",
+  "GCP",
+  "Docker",
+  "Git",
 ];
 
 function TechMarquee() {
@@ -639,7 +769,9 @@ function TechMarquee() {
       >
         {[...marqueeTech, ...marqueeTech].map((t, i) => (
           <span key={i} className="flex items-center gap-12">
-            <span className="text-[var(--pf-fg-dim)] hover:text-[var(--pf-fg)] transition">{t}</span>
+            <span className="text-[var(--pf-fg-dim)] hover:text-[var(--pf-fg)] transition">
+              {t}
+            </span>
             <span style={{ color: "var(--pf-accent)" }}>✦</span>
           </span>
         ))}
@@ -722,7 +854,10 @@ function SkillChip({ name, i }: { name: string; i: number }) {
       whileHover={{ scale: 1.06, y: -2 }}
       className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[var(--pf-accent-border)] bg-[var(--pf-accent-soft)] text-[var(--pf-fg)] text-sm font-medium whitespace-nowrap transition-colors"
     >
-      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--pf-accent)" }} />
+      <span
+        className="w-1.5 h-1.5 rounded-full shrink-0"
+        style={{ background: "var(--pf-accent)" }}
+      />
       {name}
     </motion.span>
   );
@@ -754,7 +889,10 @@ function SkillCard({
           <div>
             <span
               className="inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-black mb-3"
-              style={{ background: "var(--pf-accent)", color: "var(--pf-text-on-accent)" }}
+              style={{
+                background: "var(--pf-accent)",
+                color: "var(--pf-text-on-accent)",
+              }}
             >
               {String(index + 1).padStart(2, "0")}
             </span>
@@ -796,11 +934,12 @@ function Skills() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            My <span style={{ color: "var(--pf-accent)" }}>technical</span> arsenal
+            My <span style={{ color: "var(--pf-accent)" }}>technical</span>{" "}
+            arsenal
           </motion.h2>
           <p className="mt-6 text-[var(--pf-fg-subtle)] text-lg">
-            A competency map of the languages, frameworks, and platforms I use to
-            Excel at my work as an Engineer.
+            A competency map of the languages, frameworks, and platforms I use
+            to Excel at my work as an Engineer.
           </p>
         </div>
 
@@ -842,9 +981,9 @@ const processSteps = [
 
 const cardPositions = [
   { top: "11.8%", left: "67.3%", rotate: 5 },
-  { top: "35.8%", left: "12%",   rotate: -5 },
+  { top: "35.8%", left: "12%", rotate: -5 },
   { top: "59.8%", left: "67.3%", rotate: 4 },
-  { top: "83.8%", left: "12%",   rotate: -3 },
+  { top: "83.8%", left: "12%", rotate: -3 },
 ];
 
 const CURVE_D = "M 69 13 L 22 37 L 69 61 L 22 85";
@@ -879,7 +1018,9 @@ function Process() {
             Process
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight">
-            Here's how I turn ideas into <span style={{ color: "var(--pf-accent)" }}>real-world</span> applications
+            Here's how I turn ideas into{" "}
+            <span style={{ color: "var(--pf-accent)" }}>real-world</span>{" "}
+            applications
           </h2>
         </motion.div>
 
@@ -915,7 +1056,15 @@ function Process() {
             [69, 61],
             [22, 85],
           ].map(([cx, cy]) => (
-            <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="2.5" fill="var(--pf-accent)" stroke="var(--pf-bg)" strokeWidth="1" />
+            <circle
+              key={`${cx}-${cy}`}
+              cx={cx}
+              cy={cy}
+              r="2.5"
+              fill="var(--pf-accent)"
+              stroke="var(--pf-bg)"
+              strokeWidth="1"
+            />
           ))}
         </svg>
 
@@ -928,7 +1077,11 @@ function Process() {
               className="md:absolute"
               style={{ top: cardPositions[i].top, left: cardPositions[i].left }}
             >
-              <ProcessCard step={s} rotate={cardPositions[i].rotate} index={i} />
+              <ProcessCard
+                step={s}
+                rotate={cardPositions[i].rotate}
+                index={i}
+              />
             </div>
           ))}
         </div>
@@ -1060,7 +1213,13 @@ function ExperienceArrowButton({ href }: { href?: string }) {
     </motion.button>
   );
 
-  return href ? <a href={href} target="_blank" rel="noreferrer">{content}</a> : content;
+  return href ? (
+    <a href={href} target="_blank" rel="noreferrer">
+      {content}
+    </a>
+  ) : (
+    content
+  );
 }
 
 function Experience() {
@@ -1092,7 +1251,8 @@ function Experience() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            Where I've <span style={{ color: "var(--pf-accent)" }}>built</span> & led
+            Where I've <span style={{ color: "var(--pf-accent)" }}>built</span>{" "}
+            & led
           </motion.h2>
         </div>
 
@@ -1119,13 +1279,18 @@ function Experience() {
                 />
                 <div className="flex items-start justify-between gap-6">
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: "var(--pf-accent)" }}>
+                    <div
+                      className="text-xs tracking-[0.2em] uppercase font-semibold"
+                      style={{ color: "var(--pf-accent)" }}
+                    >
                       {e.period}
                     </div>
                     <h3 className="mt-2 text-2xl md:text-3xl font-black">
                       {e.role}
                     </h3>
-                    <p className="text-sm text-[var(--pf-fg-subtle)] mt-1">{e.org}</p>
+                    <p className="text-sm text-[var(--pf-fg-subtle)] mt-1">
+                      {e.org}
+                    </p>
                     <p className="mt-4 text-[var(--pf-fg-muted)] leading-relaxed max-w-2xl">
                       {e.body}
                     </p>
@@ -1140,17 +1305,19 @@ function Experience() {
                       ))}
                     </div>
                   </div>
-                  <ExperienceArrowButton href={
-                    i === 0
-                      ? "https://drive.google.com/file/d/1S5PJjtt_vX1GAffsJ8DN5LJ62z7A_qB7/view?usp=sharing"
-                      : i === 1
-                        ? "https://www.linkedin.com/posts/gdgc-googledevelopergroups-gdgciul-ugcPost-7379898750208561152-63zW/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
-                        : i === 2
-                          ? "https://www.linkedin.com/posts/abdullahslash_sih-smartindiahackathon-integraluniversity-ugcPost-7393330395666255873-P7DO/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
-                          : i === 3
-                            ? "https://heyzine.com/flip-book/866962fcb7.html#page/28"
-                            : "https://www.linkedin.com/posts/abdullahslash_grateful-for-this-win-proud-to-share-ugcPost-7424507956400033793-vqri/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
-                  } />
+                  <ExperienceArrowButton
+                    href={
+                      i === 0
+                        ? "https://drive.google.com/file/d/1S5PJjtt_vX1GAffsJ8DN5LJ62z7A_qB7/view?usp=sharing"
+                        : i === 1
+                          ? "https://www.linkedin.com/posts/gdgc-googledevelopergroups-gdgciul-ugcPost-7379898750208561152-63zW/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
+                          : i === 2
+                            ? "https://www.linkedin.com/posts/abdullahslash_sih-smartindiahackathon-integraluniversity-ugcPost-7393330395666255873-P7DO/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
+                            : i === 3
+                              ? "https://heyzine.com/flip-book/866962fcb7.html#page/28"
+                              : "https://www.linkedin.com/posts/abdullahslash_grateful-for-this-win-proud-to-share-ugcPost-7424507956400033793-vqri/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFkvQK4BR4aRkUAaxrtxsgKquxDlboRyJRo"
+                    }
+                  />
                 </div>
               </motion.div>
             ))}
@@ -1161,7 +1328,9 @@ function Experience() {
   );
 }
 
-/* PROJECTS */
+/* ------------------------------------------------------------------ */
+/* PROJECTS                                                            */
+/* ------------------------------------------------------------------ */
 
 const projects = [
   {
@@ -1171,7 +1340,6 @@ const projects = [
     subtitle: "Empowering wellness through nature",
     body: "A full-stack AI-powered wellness platform delivering personalized health guidance. Combines structured healthcare datasets with domain-specific knowledge and intelligent recommendation workflows to generate contextual, actionable insights for users.",
     tech: ["Python", "React", "Next.js", "Firebase", "LangFlow", "LLaMA"],
-    accent: RED,
   },
   {
     n: "02",
@@ -1179,8 +1347,14 @@ const projects = [
     name: "Idea-Evaluator",
     subtitle: "Project ideas, marked like an exam answer",
     body: "A Model Context Protocol tool designed to plug into your everyday AI assistant such as ChatGPT, Claude, Gemini, or Cursor and act as an Idea-Evaluator with your AI and help you to test your ideas, brainstorm better, research more, have a bigger context window and provide broader and grounded answers.",
-    tech: ["Next.js", "TypeScript", "MCP", "Gemini", "Upstash Redis", "Tailwind CSS"],
-    accent: RED,
+    tech: [
+      "Next.js",
+      "TypeScript",
+      "MCP",
+      "Gemini",
+      "Upstash Redis",
+      "Tailwind CSS",
+    ],
     live: "https://idea-evaluator-slash.vercel.app/",
     image: ideaEvaluatorShot,
   },
@@ -1191,7 +1365,6 @@ const projects = [
     subtitle: "Real-time Advisory system",
     body: "AI powered personal finance platform that creates a Digital Financial Twin to simulate financial decisions before they happen. Uses spending behavior, financial goals, and predictive analytics to help users compare scenarios and make smarter, data driven financial decisions.",
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
-    accent: RED,
     live: "https://finance-twin.vercel.app/",
     image: financeTwinShot,
   },
@@ -1224,14 +1397,20 @@ function ProjectPreview({ api }: { api: RefObject<PreviewApi | null> }) {
 
     const place = () => {
       // Flip to the left of the pointer when there is no room on the right.
-      const x = pos.x + 20 + PREVIEW_W > window.innerWidth - 16 ? pos.x - PREVIEW_W - 20 : pos.x + 20;
+      const x =
+        pos.x + 20 + PREVIEW_W > window.innerWidth - 16
+          ? pos.x - PREVIEW_W - 20
+          : pos.x + 20;
       el.style.transform = `translate3d(${x}px, ${pos.y - 100}px, 0)`;
     };
     const tick = () => {
       pos.x += (target.x - pos.x) * 0.35;
       pos.y += (target.y - pos.y) * 0.35;
       place();
-      raf = Math.abs(target.x - pos.x) + Math.abs(target.y - pos.y) > 0.5 ? requestAnimationFrame(tick) : 0;
+      raf =
+        Math.abs(target.x - pos.x) + Math.abs(target.y - pos.y) > 0.5
+          ? requestAnimationFrame(tick)
+          : 0;
     };
     const onMove = (e: PointerEvent) => {
       target.x = e.clientX;
@@ -1288,9 +1467,18 @@ function ProjectPreview({ api }: { api: RefObject<PreviewApi | null> }) {
               className={`${layer} h-full w-full object-cover object-top`}
             />
           ) : (
-            <div key={p.name} data-layer className={`${layer} flex flex-col justify-end p-6`}>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--pf-fg-subtle)]">{p.tag}</span>
-              <span className="mt-2 text-3xl font-black leading-[0.95] tracking-tight" style={{ color: "var(--pf-accent)" }}>
+            <div
+              key={p.name}
+              data-layer
+              className={`${layer} flex flex-col justify-end p-6`}
+            >
+              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--pf-fg-subtle)]">
+                {p.tag}
+              </span>
+              <span
+                className="mt-2 text-3xl font-black leading-[0.95] tracking-tight"
+                style={{ color: "var(--pf-accent)" }}
+              >
                 {p.name}
               </span>
             </div>
@@ -1306,7 +1494,10 @@ function Projects() {
   const preview = useRef<PreviewApi | null>(null);
 
   return (
-    <section id="projects" className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
+    <section
+      id="projects"
+      className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)]"
+    >
       <div className="max-w-6xl mx-auto px-6 pt-32 pb-16">
         <motion.span
           initial={{ opacity: 0, y: 10 }}
@@ -1348,14 +1539,16 @@ function Projects() {
 }
 
 // Public, keyless mirror of the GitHub contribution calendar (CORS-enabled).
-const CONTRIBUTIONS_URL = "https://github-contributions-api.jogruber.de/v4/IAbdullahSlash";
+const CONTRIBUTIONS_URL =
+  "https://github-contributions-api.jogruber.de/v4/IAbdullahSlash";
 // First year with contributions on the profile.
 const FIRST_ACTIVITY_YEAR = 2023;
 // "Last 12 months", then every finished year back to the first one; a new year shows up on its own.
 const ACTIVITY_PERIODS = [
   "last",
-  ...Array.from({ length: Math.max(0, new Date().getFullYear() - FIRST_ACTIVITY_YEAR) }, (_, i) =>
-    String(new Date().getFullYear() - 1 - i),
+  ...Array.from(
+    { length: Math.max(0, new Date().getFullYear() - FIRST_ACTIVITY_YEAR) },
+    (_, i) => String(new Date().getFullYear() - 1 - i),
   ),
 ];
 type ActivityPeriod = string;
@@ -1363,7 +1556,10 @@ type ActivityPeriod = string;
 function GithubActivity() {
   const [period, setPeriod] = useState<ActivityPeriod>("last");
   // The period on screen; it only changes once that period's data has arrived, so the chart never blanks.
-  const [shown, setShown] = useState<{ period: ActivityPeriod; data: ContributionDay[] } | null>(null);
+  const [shown, setShown] = useState<{
+    period: ActivityPeriod;
+    data: ContributionDay[];
+  } | null>(null);
   const [failed, setFailed] = useState(false);
   const [view, setView] = useState<"2d" | "3d">("3d");
   const cache = useRef(new Map<ActivityPeriod, ContributionDay[]>());
@@ -1376,9 +1572,14 @@ function GithubActivity() {
     }
     const ctrl = new AbortController();
     fetch(`${CONTRIBUTIONS_URL}?y=${period}`, { signal: ctrl.signal })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((r) =>
+        r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)),
+      )
       .then((d: { contributions: ContributionDay[] }) => {
-        const days = d.contributions.map(({ date, count }) => ({ date, count }));
+        const days = d.contributions.map(({ date, count }) => ({
+          date,
+          count,
+        }));
         cache.current.set(period, days);
         setShown({ period, data: days });
       })
@@ -1402,7 +1603,8 @@ function GithubActivity() {
             GitHub Activity
           </span>
           <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-[0.95]">
-            Shipping, <span style={{ color: "var(--pf-accent)" }}>all the time</span>
+            Shipping,{" "}
+            <span style={{ color: "var(--pf-accent)" }}>all the time</span>
           </h3>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -1439,7 +1641,9 @@ function GithubActivity() {
         </div>
       </div>
       {shown ? (
-        <div className={`transition-opacity duration-300 ${loading ? "opacity-50" : "opacity-100"}`}>
+        <div
+          className={`transition-opacity duration-300 ${loading ? "opacity-50" : "opacity-100"}`}
+        >
           {/* Keyed by period so each year rises out of the flat map again. */}
           <ContributionSkyline
             key={shown.period}
@@ -1452,7 +1656,9 @@ function GithubActivity() {
               isYear ? (
                 <>
                   <span className="font-semibold tabular-nums">
-                    {shown.data.reduce((sum, d) => sum + d.count, 0).toLocaleString("en-US")}
+                    {shown.data
+                      .reduce((sum, d) => sum + d.count, 0)
+                      .toLocaleString("en-US")}
                   </span>{" "}
                   contributions in {shown.period}
                 </>
@@ -1484,20 +1690,26 @@ function ProjectCard({
     offset: ["start end", "end start"],
   });
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.92, 1, 0.92]);
-  const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0.4, 1, 1, 0.4]);
+  const opacity = useTransform(
+    scrollYProgress,
+    [0, 0.4, 0.6, 1],
+    [0.4, 1, 1, 0.4],
+  );
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
-  const isRed = project.accent === RED;
-
   return (
-    <div ref={ref} className="sticky px-6" style={{ top: `${80 + index * 24}px`, zIndex: 10 + index }}>
+    <div
+      ref={ref}
+      className="sticky px-6"
+      style={{ top: `${80 + index * 24}px`, zIndex: 10 + index }}
+    >
       <motion.article
         style={{
           scale,
           opacity,
           y,
-          background: isRed ? "var(--pf-accent)" : "var(--pf-card-bg)",
-          borderColor: isRed ? "rgba(0,0,0,0.2)" : "var(--pf-card-border)",
+          background: "var(--pf-accent)",
+          borderColor: "rgba(0,0,0,0.2)",
         }}
         onPointerEnter={(e) => e.pointerType === "mouse" && onHover(true)}
         onPointerLeave={() => onHover(false)}
@@ -1505,13 +1717,10 @@ function ProjectCard({
       >
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <span
-              className={`text-xs font-bold px-3 py-1 rounded-full ${isRed ? "bg-[var(--pf-accent)] text-[var(--pf-text-on-accent)]" : "text-[var(--pf-bg)]"}`}
-              style={!isRed ? { background: "var(--pf-accent)", color: "var(--pf-text-on-accent)" } : undefined}
-            >
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-[var(--pf-accent)] text-[var(--pf-text-on-accent)]">
               {project.tag}
             </span>
-            <span className={`text-xs uppercase tracking-widest ${isRed ? "text-[var(--pf-text-on-accent-muted)]" : "text-[var(--pf-fg-dim)]"}`}>
+            <span className="text-xs uppercase tracking-widest text-[var(--pf-text-on-accent-muted)]">
               Project {project.n} / {String(total).padStart(2, "0")}
             </span>
           </div>
@@ -1525,21 +1734,17 @@ function ProjectCard({
               className="h-8 w-8 md:h-12 md:w-12 shrink-0 opacity-0 -translate-x-2 translate-y-2 transition-[opacity,translate] duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0"
             />
           </h3>
-          <p className={`mt-3 text-lg md:text-xl font-medium ${isRed ? "text-[var(--pf-text-on-accent)]" : "text-[var(--pf-fg-muted)]"}`}>
+          <p className="mt-3 text-lg md:text-xl font-medium text-[var(--pf-text-on-accent)]">
             {project.subtitle}
           </p>
-          <p className={`mt-6 max-w-2xl leading-relaxed ${isRed ? "text-[var(--pf-text-on-accent)]/95" : "text-[var(--pf-fg-muted)]"}`}>
+          <p className="mt-6 max-w-2xl leading-relaxed text-[var(--pf-text-on-accent)]/95">
             {project.body}
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
             {project.tech.map((t) => (
               <span
                 key={t}
-                className={`text-xs px-3 py-1 rounded-full border ${
-                  isRed
-                    ? "border-black/30 text-black bg-black/5"
-                    : "border-[var(--pf-card-border)] text-[var(--pf-fg-dim)]"
-                }`}
+                className="text-xs px-3 py-1 rounded-full border border-black/30 text-black bg-black/5"
               >
                 {t}
               </span>
@@ -1592,7 +1797,10 @@ const achievements: Milestone[] = [
     photos: [
       { src: hackvedaTeam, alt: "HackVeda team outside the event venue" },
       { src: hackvedaWinner, alt: "HackVeda winner certificate held outdoors" },
-      { src: hackvedaWork, alt: "Team working together during the HackVeda hackathon" },
+      {
+        src: hackvedaWork,
+        alt: "Team working together during the HackVeda hackathon",
+      },
       { src: hackvedaCertificate, alt: "HackVeda winner certificate" },
     ],
   },
@@ -1601,7 +1809,12 @@ const achievements: Milestone[] = [
     title: "Smart India Hackathon — Internal",
     org: "Integral University",
     body: "Winner of the Smart India Hackathon internal edition at Integral University.",
-    photos: [{ src: smartIndiaTeam, alt: "Smart India Hackathon internal winning team" }],
+    photos: [
+      {
+        src: smartIndiaTeam,
+        alt: "Smart India Hackathon internal winning team",
+      },
+    ],
   },
   {
     tag: "Lead",
@@ -1617,7 +1830,7 @@ const publications: Milestone[] = [
     tag: "Published",
     title: "The Art of Prompting",
     org: "Department of Computer Science — Integral University",
-    body: "Authored and published an article on prompt engineering in the department's annual magazine \"To The Horizon\".",
+    body: 'Authored and published an article on prompt engineering in the department\'s annual magazine "To The Horizon".',
     source: "To The Horizon",
     link: "https://heyzine.com/flip-book/866962fcb7.html#page/29",
   },
@@ -1630,14 +1843,6 @@ const publications: Milestone[] = [
     link: "https://abdullahslash.substack.com/p/how-to-build-a-chatbot-wrapper?r=7vzbv6",
   },
 ];
-
-const certs = [
-  { title: "MERN Stack Development", org: "Self-directed · Production projects" },
-  { title: "AI / LLM Engineering", org: "LangChain · LangFlow · Gemini" },
-  { title: "Cloud Fundamentals", org: "AWS & GCP" },
-  { title: "Data Science with Python", org: "Pandas · NumPy · Scikit-learn" },
-];
-
 
 function AchievementPhotoGallery({
   achievement,
@@ -1662,16 +1867,23 @@ function AchievementPhotoGallery({
     );
   };
 
+  const isOpen = activePhoto !== null;
+  const photoCount = photos.length;
+
   useEffect(() => {
-    if (activePhoto === null) return;
+    if (!isOpen) return;
+    const step = (by: number) =>
+      setActivePhoto((current) =>
+        current === null ? 0 : (current + by + photoCount) % photoCount,
+      );
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setActivePhoto(null);
-      if (event.key === "ArrowLeft") showPreviousPhoto();
-      if (event.key === "ArrowRight") showNextPhoto();
+      if (event.key === "ArrowLeft") step(-1);
+      if (event.key === "ArrowRight") step(1);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activePhoto === null]);
+  }, [isOpen, photoCount, setActivePhoto]);
 
   return (
     <>
@@ -1769,7 +1981,13 @@ function AchievementPhotoGallery({
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-[var(--pf-accent-soft)]">
-                      <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{
+                          background: "var(--pf-accent)",
+                          boxShadow: "0 0 14px var(--pf-accent-glow)",
+                        }}
+                      />
                       {achievement.tag}
                     </div>
                     <h3 className="max-w-2xl text-2xl font-black leading-[0.95] tracking-tight text-[var(--pf-fg)] md:text-4xl">
@@ -1780,11 +1998,15 @@ function AchievementPhotoGallery({
                     </p>
                   </div>
                   <span className="rounded-full border border-[var(--pf-card-border)] px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-[var(--pf-fg-dim)]">
-                    {String(activePhoto + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
+                    {String(activePhoto + 1).padStart(2, "0")} /{" "}
+                    {String(photos.length).padStart(2, "0")}
                   </span>
                 </div>
                 <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <p className="max-w-2xl border-l-2 pl-4 text-sm leading-relaxed text-[var(--pf-fg-muted)]" style={{ borderColor: "var(--pf-accent)" }}>
+                  <p
+                    className="max-w-2xl border-l-2 pl-4 text-sm leading-relaxed text-[var(--pf-fg-muted)]"
+                    style={{ borderColor: "var(--pf-accent)" }}
+                  >
                     {achievement.body}
                   </p>
                   {achievement.link && (
@@ -1850,8 +2072,17 @@ function MilestoneCard({ item, index }: { item: Milestone; index: number }) {
           </span>
         </a>
       )}
-      <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
-        <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
+      <div
+        className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]"
+        style={{ color: "var(--pf-accent)" }}
+      >
+        <span
+          className="h-2 w-2 rounded-full"
+          style={{
+            background: "var(--pf-accent)",
+            boxShadow: "0 0 14px var(--pf-accent-glow)",
+          }}
+        />
         {item.tag}
       </div>
       <h3 className="text-xl font-black mb-2 leading-tight text-[var(--pf-fg)]">
@@ -1861,7 +2092,9 @@ function MilestoneCard({ item, index }: { item: Milestone; index: number }) {
         {item.org}
       </p>
       <div className="flex flex-wrap items-center gap-4">
-        <p className="text-sm text-[var(--pf-fg-muted)] leading-relaxed">{item.body}</p>
+        <p className="text-sm text-[var(--pf-fg-muted)] leading-relaxed">
+          {item.body}
+        </p>
         {item.link && (
           <a
             href={item.link}
@@ -1894,7 +2127,10 @@ function MilestoneSection({
   columns: string;
 }) {
   return (
-    <section id={id} className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]">
+    <section
+      id={id}
+      className="relative py-32 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]"
+    >
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <motion.span
@@ -2000,7 +2236,8 @@ function Certifications() {
             viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[0.95]"
           >
-            Verified <span style={{ color: "var(--pf-accent)" }}>certificates</span>
+            Verified{" "}
+            <span style={{ color: "var(--pf-accent)" }}>certificates</span>
           </motion.h2>
         </div>
 
@@ -2048,8 +2285,17 @@ function Certifications() {
                   </span>
                 </a>
               )}
-              <div className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--pf-accent)" }}>
-                <span className="h-2 w-2 rounded-full" style={{ background: "var(--pf-accent)", boxShadow: "0 0 14px var(--pf-accent-glow)" }} />
+              <div
+                className="mb-6 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em]"
+                style={{ color: "var(--pf-accent)" }}
+              >
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{
+                    background: "var(--pf-accent)",
+                    boxShadow: "0 0 14px var(--pf-accent-glow)",
+                  }}
+                />
                 {c.tag}
               </div>
               <h3 className="text-xl font-black mb-2 leading-tight text-[var(--pf-fg)]">
@@ -2128,10 +2374,15 @@ function Education() {
               transition={{ delay: i * 0.1 }}
               className="p-8 rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] hover:bg-[var(--pf-card-bg)] transition"
             >
-              <div className="text-xs uppercase tracking-widest font-semibold mb-3" style={{ color: "var(--pf-accent)" }}>
+              <div
+                className="text-xs uppercase tracking-widest font-semibold mb-3"
+                style={{ color: "var(--pf-accent)" }}
+              >
                 {e.period}
               </div>
-              <h3 className="text-xl md:text-2xl font-black text-[var(--pf-fg)]">{e.degree}</h3>
+              <h3 className="text-xl md:text-2xl font-black text-[var(--pf-fg)]">
+                {e.degree}
+              </h3>
               <p className="text-sm text-[var(--pf-fg-subtle)] mt-1">{e.org}</p>
               <p className="mt-4 text-[var(--pf-fg-muted)]">{e.note}</p>
             </motion.div>
@@ -2169,63 +2420,85 @@ function Contact() {
       ref={ref}
       className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)] overflow-hidden"
     >
-      <motion.div style={reduced ? undefined : { y: reveal }} className="relative pt-40 px-6">
-      <div
-        aria-hidden
-        className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[80vw] rounded-[50%] blur-[80px]"
-      />
-      <div aria-hidden className="contact-grid pointer-events-none absolute inset-0" />
       <motion.div
-        style={{ y, scale }}
-        className="relative max-w-5xl mx-auto text-center"
+        style={reduced ? undefined : { y: reveal }}
+        className="relative pt-40 px-6"
       >
-        <p className="text-xs tracking-[0.3em] uppercase mb-8" style={{ color: "var(--pf-accent)" }}>
-          Let's build something
-        </p>
-        <h2 className="text-6xl md:text-9xl font-black tracking-tight leading-[0.9]">
-          Say
-          <br />
-          <span style={{ color: "var(--pf-accent)" }}>مَرْحَبًا Hello नमस्ते</span>
-        </h2>
-        <p className="mt-10 text-[var(--pf-fg-muted)] max-w-xl mx-auto text-lg">
-          Open to internships, freelance builds, and full-time roles in AI &
-          Full-Stack engineering. I typically respond within 24–48 hours.
-        </p>
-
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <WebShotLink href={GMAIL_COMPOSE_URL} target="_blank" rel="noreferrer" size="lg" variant="accent">
-            <MailIcon className="w-5 h-5" />
-            Email me
-          </WebShotLink>
-          <WebShotLink href={WHATSAPP_URL} target="_blank" rel="noreferrer" size="lg">
-            <WhatsAppIcon className="w-5 h-5" />
-            WhatsApp
-          </WebShotLink>
-        </div>
-
-        <div className="mt-10 flex items-center justify-center gap-4">
-          <a
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
+        <div
+          aria-hidden
+          className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[80vw] rounded-[50%] blur-[80px]"
+        />
+        <div
+          aria-hidden
+          className="contact-grid pointer-events-none absolute inset-0"
+        />
+        <motion.div
+          style={{ y, scale }}
+          className="relative max-w-5xl mx-auto text-center"
+        >
+          <p
+            className="text-xs tracking-[0.3em] uppercase mb-8"
+            style={{ color: "var(--pf-accent)" }}
           >
-            <LinkedInIcon className="w-4 h-4" />
-          </a>
-          <a
-            href={GITHUB_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
-          >
-            <GithubIcon className="w-4 h-4" />
-          </a>
+            Let's build something
+          </p>
+          <h2 className="text-6xl md:text-9xl font-black tracking-tight leading-[0.9]">
+            Say
+            <br />
+            <span style={{ color: "var(--pf-accent)" }}>
+              مَرْحَبًا Hello नमस्ते
+            </span>
+          </h2>
+          <p className="mt-10 text-[var(--pf-fg-muted)] max-w-xl mx-auto text-lg">
+            Open to internships, freelance builds, and full-time roles in AI &
+            Full-Stack engineering. I typically respond within 24–48 hours.
+          </p>
+
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+            <WebShotLink
+              href={GMAIL_COMPOSE_URL}
+              target="_blank"
+              rel="noreferrer"
+              size="lg"
+              variant="accent"
+            >
+              <MailIcon className="w-5 h-5" />
+              Email me
+            </WebShotLink>
+            <WebShotLink
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noreferrer"
+              size="lg"
+            >
+              <WhatsAppIcon className="w-5 h-5" />
+              WhatsApp
+            </WebShotLink>
+          </div>
+
+          <div className="mt-10 flex items-center justify-center gap-4">
+            <a
+              href={LINKEDIN_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
+            >
+              <LinkedInIcon className="w-4 h-4" />
+            </a>
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
+            >
+              <GithubIcon className="w-4 h-4" />
+            </a>
+          </div>
+        </motion.div>
+        {/* Sits on the line that closes the page, cropped by it. */}
+        <div className="relative mt-24">
+          <HalftoneWordmark word="Abdullah Azmi" />
         </div>
-      </motion.div>
-      {/* Sits on the line that closes the page, cropped by it. */}
-      <div className="relative mt-24">
-        <HalftoneWordmark word="Abdullah Azmi" />
-      </div>
       </motion.div>
     </section>
   );

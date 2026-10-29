@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { toRGB, type RGB } from "@/lib/color";
+
 /**
  * Contribution Skyline — a year of activity as a GitHub-style heat map that
  * folds up into an isometric skyline, and back down again.
@@ -38,7 +40,6 @@ export type ContributionStats = {
   longest: Streak;
   current: Streak;
 };
-export type RGB = [number, number, number];
 
 const DAY_MS = 86400000;
 
@@ -341,24 +342,6 @@ const BG = "var(--pf-bg)";
 const FG = "var(--pf-fg)";
 const BORDER = "var(--pf-card-border)";
 const MUTED = "var(--pf-fg-subtle)";
-
-// Any CSS colour → sRGB, by letting the browser paint it. Handles oklch, color-mix, names…
-let probe: CanvasRenderingContext2D | null = null;
-const toRGB = (color: string, fallback: RGB | null): RGB | null => {
-  if (!probe) {
-    const c = document.createElement("canvas");
-    c.width = c.height = 1;
-    probe = c.getContext("2d", { willReadFrequently: true });
-  }
-  if (!probe) return fallback;
-  probe.clearRect(0, 0, 1, 1);
-  probe.fillStyle = "rgba(0,0,0,0)";
-  probe.fillStyle = color;
-  probe.fillRect(0, 0, 1, 1);
-  const d = probe.getImageData(0, 0, 1, 1).data;
-  if (d[3] < 8) return fallback;
-  return [d[0], d[1], d[2]];
-};
 
 const rgbString = (r: number, g: number, b: number) =>
   "rgb(" + Math.round(r) + "," + Math.round(g) + "," + Math.round(b) + ")";
@@ -785,17 +768,14 @@ export default function ContributionSkyline({
 
     const retheme = () => {
       const cs = getComputedStyle(root);
-      fg = toRGB(cs.color, FG_FALLBACK) ?? FG_FALLBACK;
-      const b = toRGB(cs.backgroundColor, null);
+      fg = toRGB(cs.color) ?? FG_FALLBACK;
+      const b = toRGB(cs.backgroundColor);
       bg = b ?? (luminance(fg) > 0.5 ? [10, 10, 10] : [255, 255, 255]);
       isDark = luminance(bg) < 0.45;
       font = "400 10px " + (cs.fontFamily || "sans-serif");
       const pal = resolvePalette(cfg.current.palette, isDark);
       const empty = mixRGB(bg, fg, isDark ? 0.11 : 0.075);
-      const all: RGB[] = [
-        empty,
-        ...pal.map((c) => toRGB(c, FG_FALLBACK) ?? FG_FALLBACK),
-      ];
+      const all: RGB[] = [empty, ...pal.map((c) => toRGB(c) ?? FG_FALLBACK)];
       for (let k = 0; k < 5; k++)
         for (let ch = 0; ch < 3; ch++) colGoal[k * 3 + ch] = all[k][ch];
       if (!colReady || reduced) {

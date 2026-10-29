@@ -1,8 +1,7 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
-  createRootRouteWithContext,
+  createRootRoute,
   useRouter,
   useLocation,
   HeadContent,
@@ -41,7 +40,10 @@ function NotFoundComponent() {
       />
 
       <header className="relative mx-auto flex w-full max-w-6xl items-center pt-8">
-        <Link to="/" className="text-lg font-black tracking-tight text-[var(--pf-fg)]">
+        <Link
+          to="/"
+          className="text-lg font-black tracking-tight text-[var(--pf-fg)]"
+        >
           Abdullah Azmi<span style={{ color: "var(--pf-accent)" }}>.</span>
         </Link>
       </header>
@@ -66,10 +68,14 @@ function NotFoundComponent() {
           {...rise(0.25)}
           className="mt-8 text-3xl font-black leading-[0.95] tracking-tight md:text-5xl"
         >
-          This page took a <span style={{ color: "var(--pf-accent)" }}>wrong turn</span>.
+          This page took a{" "}
+          <span style={{ color: "var(--pf-accent)" }}>wrong turn</span>.
         </motion.h2>
 
-        <motion.p {...rise(0.35)} className="mt-5 max-w-md text-base text-[var(--pf-fg-muted)] md:text-lg">
+        <motion.p
+          {...rise(0.35)}
+          className="mt-5 max-w-md text-base text-[var(--pf-fg-muted)] md:text-lg"
+        >
           The page you're looking for doesn't exist or has been moved.
         </motion.p>
 
@@ -78,10 +84,15 @@ function NotFoundComponent() {
           className="mt-8 max-w-full truncate rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] px-5 py-2 font-mono text-xs text-[var(--pf-fg-subtle)] md:text-sm"
         >
           GET <span className="text-[var(--pf-fg)]">{pathname}</span>{" "}
-          <span style={{ color: "var(--pf-accent)" }}>&rarr; 404 Not Found</span>
+          <span style={{ color: "var(--pf-accent)" }}>
+            &rarr; 404 Not Found
+          </span>
         </motion.code>
 
-        <motion.div {...rise(0.55)} className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <motion.div
+          {...rise(0.55)}
+          className="mt-10 flex flex-wrap items-center justify-center gap-4"
+        >
           <Link
             to="/"
             className="rounded-full bg-[var(--pf-fg)] px-6 py-3 text-sm font-semibold text-[var(--pf-bg)] transition hover:opacity-90"
@@ -100,18 +111,25 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
+function ErrorComponent({
+  error,
+  reset,
+}: {
+  error: unknown;
+  reset: () => void;
+}) {
   console.error(error);
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--pf-bg)] px-4 font-sans text-[var(--pf-fg)] antialiased">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+        <h1 className="text-xl font-semibold tracking-tight">
           This page didn't load
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+        <p className="mt-2 text-sm text-[var(--pf-fg-muted)]">
+          Something went wrong on our end. You can try refreshing or head back
+          home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -119,13 +137,13 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-[var(--pf-fg)] px-5 py-2 text-sm font-semibold text-[var(--pf-bg)] transition hover:opacity-90"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center justify-center rounded-full border border-[var(--pf-glass-border-strong)] px-5 py-2 text-sm font-semibold transition hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)]"
           >
             Go home
           </a>
@@ -135,7 +153,7 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -154,7 +172,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image", content: `${SITE_URL}/og-image.jpg` },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "Abdullah Azmi, AI Engineer & Full Stack Developer" },
+      {
+        property: "og:image:alt",
+        content: "Abdullah Azmi, AI Engineer & Full Stack Developer",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: `${SITE_URL}/og-image.jpg` },
     ],
@@ -173,7 +194,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-const THEME_SCRIPT = "try{var t=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}";
+const THEME_SCRIPT =
+  "try{var t=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}";
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -192,12 +214,6 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-    </QueryClientProvider>
-  );
+  // Required: nested routes render here. Removing <Outlet /> breaks all child routes.
+  return <Outlet />;
 }
