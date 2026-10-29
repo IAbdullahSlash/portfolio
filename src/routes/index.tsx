@@ -7,6 +7,7 @@ import {
   useTransform,
   useSpring,
   useAnimate,
+  useReducedMotion,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
 import profilePic from "@/assets/abdullah.webp";
@@ -24,6 +25,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Moon, Sun, X } from "lucide-react"
 import { SITE_URL } from "@/lib/site";
 import { WebShotLink } from "@/components/web-shot-link";
 import ContributionSkyline, { type ContributionDay } from "@/components/contribution-skyline";
+import { HalftoneWordmark } from "@/components/halftone-wordmark";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -2152,15 +2154,30 @@ function Contact() {
   const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1, 1.05]);
 
+  // Curtain reveal: while the section scrolls in, its content holds still on screen,
+  // so the page above slides off it instead of the section scrolling up with the page.
+  const reduced = useReducedMotion();
+  const { scrollYProgress: revealProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end end"],
+  });
+  const reveal = useTransform(revealProgress, [0, 1], ["-100%", "0%"]);
+
   return (
     <section
       id="contact"
       ref={ref}
-      className="relative py-40 px-6 bg-[var(--pf-bg)] border-t border-[var(--pf-line)] overflow-hidden"
+      className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)] overflow-hidden"
     >
+      <motion.div style={reduced ? undefined : { y: reveal }} className="relative pt-40 px-6">
+      <div
+        aria-hidden
+        className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[80vw] rounded-[50%] blur-[80px]"
+      />
+      <div aria-hidden className="contact-grid pointer-events-none absolute inset-0" />
       <motion.div
         style={{ y, scale }}
-        className="max-w-5xl mx-auto text-center"
+        className="relative max-w-5xl mx-auto text-center"
       >
         <p className="text-xs tracking-[0.3em] uppercase mb-8" style={{ color: "var(--pf-accent)" }}>
           Let's build something
@@ -2205,15 +2222,18 @@ function Contact() {
           </a>
         </div>
       </motion.div>
+      {/* Sits on the line that closes the page, cropped by it. */}
+      <div className="relative mt-24">
+        <HalftoneWordmark word="Abdullah Azmi" />
+      </div>
+      </motion.div>
     </section>
   );
 }
 
 function Footer() {
   return (
-    <footer className="border-t border-[var(--pf-line)] px-6 py-10 text-sm text-[var(--pf-fg-dim)] bg-[var(--pf-bg)]">
-      <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      </div>
-    </footer>
+    // Just the closing line under the name; no empty bar after it.
+    <footer className="border-t border-[var(--pf-line)] bg-[var(--pf-bg)]" />
   );
 }

@@ -303,3 +303,31 @@
   --pf-shadow-strong: rgba(0, 0, 0, 0.15);
   --pf-shadow-xl: rgba(0, 0, 0, 0.2);
 }
+
+/* ── Contact background: breathing red aurora over a faded grid ── */
+@keyframes contact-breathe {
+  from { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  to { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+}
+.contact-aurora {
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--pf-accent) 22%, transparent) 0%,
+    color-mix(in oklab, var(--pf-accent) 8%, transparent) 40%,
+    transparent 70%
+  );
+  animation: contact-breathe 8s ease-in-out infinite alternate;
+}
+.contact-grid {
+  background-size: 60px 60px;
+  background-image:
+    linear-gradient(to right, var(--pf-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--pf-grid) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-aurora {
+    animation: none;
+    transform: translate(-50%, -50%);
+  }
+}
