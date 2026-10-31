@@ -22,32 +22,6 @@ function dotRadius(coverage: number, gap: number) {
   return Math.sqrt(c) * gap * 0.56;
 }
 
-/** One spring step back home, plus the push from a pointer at (px, py) within radius r. */
-function step(
-  x: number,
-  y: number,
-  vx: number,
-  vy: number,
-  hx: number,
-  hy: number,
-  px: number,
-  py: number,
-  r: number,
-) {
-  const dx = x - px;
-  const dy = y - py;
-  const d2 = dx * dx + dy * dy;
-  if (r > 0 && d2 < r * r) {
-    const d = Math.sqrt(d2) + 0.001;
-    const f = (1 - d / r) * 2.6;
-    vx += (dx / d) * f;
-    vy += (dy / d) * f;
-  }
-  vx = (vx + (hx - x) * 0.05) * 0.84;
-  vy = (vy + (hy - y) * 0.05) * 0.84;
-  return [x + vx, y + vy, vx, vy];
-}
-
 export function HalftoneWordmark({
   word,
   dotGap = 6,
@@ -93,6 +67,7 @@ export function HalftoneWordmark({
     let dots = new Float32Array(0);
     let count = 0;
     let grainTile: HTMLCanvasElement | null = null;
+    let grainPattern: CanvasPattern | null = null;
     let ink: RGB = [255, 255, 255];
     let warm: RGB = [255, 42, 42];
 
@@ -190,7 +165,12 @@ export function HalftoneWordmark({
       const ringAge = ring.t < 0 ? 1e9 : now - ring.t;
       const ringR = ringAge * 0.9;
       const inkStr = `rgb(${ink[0]},${ink[1]},${ink[2]})`;
+      const pointerIn = r > 0 && px > -1e4;
+      const r2 = r * r;
       let moving = false;
+      // Dots at rest share one path and one fill; only pushed dots get their own colour.
+      ctx.fillStyle = inkStr;
+      ctx.beginPath();
       for (let i = 0; i < count; i++) {
         const j = i * 7;
         let x = dots[j];
@@ -211,17 +191,24 @@ export function HalftoneWordmark({
               vy += (dy / d) * f;
             }
           }
-          const s = step(x, y, vx, vy, hx, hy, px, py, r);
-          x = s[0];
-          y = s[1];
-          vx = s[2];
-          vy = s[3];
-          if (
-            Math.abs(vx) + Math.abs(vy) > 0.02 ||
-            Math.abs(x - hx) + Math.abs(y - hy) > 0.05
-          )
+          // Spring back home, plus the push from the pointer.
+          const dx = x - px;
+          const dy = y - py;
+          const d2 = dx * dx + dy * dy;
+          if (r > 0 && d2 < r2) {
+            const d = Math.sqrt(d2) + 0.001;
+            const f = (1 - d / r) * 2.6;
+            vx += (dx / d) * f;
+            vy += (dy / d) * f;
+          }
+          vx = (vx + (hx - x) * 0.05) * 0.84;
+          vy = (vy + (hy - y) * 0.05) * 0.84;
+          x += vx;
+          y += vy;
+          const away = Math.abs(x - hx) + Math.abs(y - hy);
+          if (Math.abs(vx) + Math.abs(vy) > 0.02 || (away > 0.05 && !pointerIn))
             moving = true;
-          else {
+          else if (away <= 0.05) {
             x = hx;
             y = hy;
             vx = 0;
@@ -234,10 +221,21 @@ export function HalftoneWordmark({
         }
         // Warmth: 0 at home, 1 once pushed 28px or more away.
         const k = Math.min(1, Math.hypot(x - hx, y - hy) / 28);
-        ctx.fillStyle =
-          k > 0.02
-            ? `rgb(${Math.round(ink[0] + (warm[0] - ink[0]) * k)},${Math.round(ink[1] + (warm[1] - ink[1]) * k)},${Math.round(ink[2] + (warm[2] - ink[2]) * k)})`
-            : inkStr;
+        if (k > 0.02) continue;
+        ctx.moveTo(x + dots[j + 6], y);
+        ctx.arc(x, y, dots[j + 6], 0, 6.2832);
+      }
+      ctx.fill();
+      for (let i = 0; i < count; i++) {
+        const j = i * 7;
+        const x = dots[j];
+        const y = dots[j + 1];
+        const k = Math.min(
+          1,
+          Math.hypot(x - dots[j + 4], y - dots[j + 5]) / 28,
+        );
+        if (k <= 0.02) continue;
+        ctx.fillStyle = `rgb(${Math.round(ink[0] + (warm[0] - ink[0]) * k)},${Math.round(ink[1] + (warm[1] - ink[1]) * k)},${Math.round(ink[2] + (warm[2] - ink[2]) * k)})`;
         ctx.beginPath();
         ctx.arc(x, y, dots[j + 6], 0, 6.2832);
         ctx.fill();
@@ -247,16 +245,16 @@ export function HalftoneWordmark({
         // Grain only on the dots: source-atop keeps empty space transparent.
         ctx.globalAlpha = Math.min(1, grain) * 0.18;
         ctx.globalCompositeOperation = "source-atop";
-        const pattern = ctx.createPattern(grainTile, "repeat");
-        if (pattern) {
-          ctx.fillStyle = pattern;
+        grainPattern ??= ctx.createPattern(grainTile, "repeat");
+        if (grainPattern) {
+          ctx.fillStyle = grainPattern;
           ctx.fillRect(0, 0, w, h);
         }
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = "source-over";
       }
-      // Sleep once everything is home and nothing is pushing.
-      awake = moving || ringAge < 900 || px > -1e4;
+      // Sleep once nothing is moving, even with the pointer resting on the word.
+      awake = moving || ringAge < 900;
     };
 
     const loop = (now: number) => {

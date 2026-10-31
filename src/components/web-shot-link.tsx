@@ -314,7 +314,7 @@ export const WebShotLink = forwardRef<HTMLAnchorElement, WebShotLinkProps>(
         pointer.x = e.clientX;
         pointer.y = e.clientY;
         pointer.known = true;
-        if (raf) return;
+        if (raf || !near) return;
         const r = btn.getBoundingClientRect();
         if (
           e.clientX > r.left - reach &&
@@ -341,6 +341,15 @@ export const WebShotLink = forwardRef<HTMLAnchorElement, WebShotLinkProps>(
         kick();
       });
       ro.observe(btn);
+      // Off-screen buttons skip the layout read on every pointer move.
+      let near = true;
+      const io = new IntersectionObserver(
+        (entries) => {
+          near = entries.some((en) => en.isIntersecting);
+        },
+        { rootMargin: `${reach}px` },
+      );
+      io.observe(btn);
       window.addEventListener("pointermove", onMove, { passive: true });
       window.addEventListener("pointerdown", onMove, { passive: true });
       window.addEventListener("pointerup", onEnd, { passive: true });
@@ -349,6 +358,7 @@ export const WebShotLink = forwardRef<HTMLAnchorElement, WebShotLinkProps>(
       return () => {
         cancelAnimationFrame(raf);
         ro.disconnect();
+        io.disconnect();
         window.removeEventListener("pointermove", onMove);
         window.removeEventListener("pointerdown", onMove);
         window.removeEventListener("pointerup", onEnd);

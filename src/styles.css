@@ -78,6 +78,7 @@
   --glow-border: 1.5px;
   --glow-size: 280px;
   --glow-color: 0 100% 58%;
+  /* --glow-x / --glow-y are card-local and set from Portfolio for nearby cards only. */
   --glow-at: var(--glow-x, -1000px) var(--glow-y, -1000px);
   position: relative;
   background-image:
@@ -87,7 +88,6 @@
       transparent
     ),
     linear-gradient(to bottom right, var(--pf-card-bg), transparent);
-  background-attachment: fixed, scroll;
 }
 
 .glow-card::before,
@@ -99,7 +99,9 @@
   inset: calc(var(--glow-border) * -1);
   border: var(--glow-border) solid transparent;
   border-radius: inherit;
-  background-attachment: fixed;
+  --glow-at: calc(var(--glow-x, -1000px) + var(--glow-border))
+    calc(var(--glow-y, -1000px) + var(--glow-border));
+  background-origin: border-box;
   background-repeat: no-repeat;
   mask:
     linear-gradient(transparent, transparent), linear-gradient(white, white);
@@ -135,6 +137,8 @@
 }
 
 .glow-card-halo::before {
+  --glow-at: calc(var(--glow-x, -1000px) + 10px)
+    calc(var(--glow-y, -1000px) + 10px);
   inset: -10px;
   border-width: 10px;
   border-radius: calc(1.5rem + 10px);
@@ -204,6 +208,16 @@
   --pf-shadow: rgba(0, 0, 0, 0.1);
   --pf-shadow-strong: rgba(0, 0, 0, 0.15);
   --pf-shadow-xl: rgba(0, 0, 0, 0.2);
+}
+
+/* Runs on the compositor; TechMarquee pauses it while off screen. */
+@keyframes tech-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.tech-marquee {
+  animation: tech-marquee 40s linear infinite;
 }
 
 /* ── Contact background: breathing red aurora over a faded grid ── */

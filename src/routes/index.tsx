@@ -14,6 +14,7 @@ import {
   useTransform,
   useSpring,
   useAnimate,
+  useInView,
   useReducedMotion,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
@@ -126,6 +127,9 @@ const STRUCTURED_DATA = {
   ],
 };
 
+// Beyond this distance from a card (px) its spotlight is fully off (--glow-size in styles.css is 280px).
+const GLOW_REACH = 300;
+
 function Portfolio() {
   const [introDone, setIntroDone] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -135,27 +139,56 @@ function Portfolio() {
     return () => clearTimeout(t);
   }, []);
 
-  // Pointer position for the .glow-card spotlight (viewport coords, read by fixed backgrounds).
+  // Pointer position for the .glow-card spotlight, written only to on-screen cards
+  // the pointer is near, in card-local coords, so the rest of the page never restyles.
   useEffect(() => {
-    // Batched to one write per frame: each write restyles the whole page.
-    const root = document.documentElement;
+    const onScreen = new Set<HTMLElement>();
+    const parked = new WeakSet<HTMLElement>();
     let x = 0;
     let y = 0;
+    let known = false;
     let raf = 0;
     const write = () => {
       raf = 0;
-      root.style.setProperty("--glow-x", `${x}px`);
-      root.style.setProperty("--glow-y", `${y}px`);
+      for (const card of onScreen) {
+        const r = card.getBoundingClientRect();
+        const dx = x - Math.max(r.left, Math.min(x, r.right));
+        const dy = y - Math.max(r.top, Math.min(y, r.bottom));
+        const near = Math.hypot(dx, dy) <= GLOW_REACH;
+        if (!near && parked.has(card)) continue;
+        if (near) parked.delete(card);
+        else parked.add(card);
+        card.style.setProperty("--glow-x", `${x - r.left}px`);
+        card.style.setProperty("--glow-y", `${y - r.top}px`);
+      }
+    };
+    const schedule = () => {
+      if (known && !raf) raf = requestAnimationFrame(write);
     };
     const onMove = (e: PointerEvent) => {
       x = e.clientX;
       y = e.clientY;
-      if (!raf) raf = requestAnimationFrame(write);
+      known = true;
+      schedule();
     };
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const card = entry.target as HTMLElement;
+        if (entry.isIntersecting) onScreen.add(card);
+        else onScreen.delete(card);
+      }
+      schedule();
+    });
+    document
+      .querySelectorAll<HTMLElement>(".glow-card")
+      .forEach((card) => io.observe(card));
     document.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("scroll", schedule, { passive: true });
     return () => {
       cancelAnimationFrame(raf);
+      io.disconnect();
       document.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", schedule);
     };
   }, []);
 
@@ -342,7 +375,7 @@ function Nav({
 }) {
   return (
     <header className="fixed top-4 inset-x-0 z-50 px-4">
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-glass-bg)] backdrop-blur-xl shadow-[0_8px_30px_var(--pf-shadow)]">
+      <div className="max-w-5xl mx-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full border border-[var(--pf-card-border)] bg-[var(--pf-glass-bg)] backdrop-blur-md shadow-[0_8px_30px_var(--pf-shadow)]">
         <a
           href="#top"
           className="text-lg font-black tracking-tight shrink-0 text-[var(--pf-fg)]"
@@ -466,6 +499,15 @@ function FlipText({ children }: { children: string }) {
 function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+  const videoInView = useInView(videoRef);
+
+  // Stop decoding the reel while it is off screen, unless it is playing with sound.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (videoInView) v.play().catch(() => {});
+    else if (v.muted) v.pause();
+  }, [videoInView]);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -614,8 +656,8 @@ function About() {
         style={{ y: yBg }}
         className="absolute inset-0 pointer-events-none opacity-20"
       >
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-black/20 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-white/20 blur-3xl" />
+        <div className="absolute -top-56 -left-56 w-[800px] h-[800px] bg-[radial-gradient(closest-side,rgb(0_0_0/0.2),transparent)]" />
+        <div className="absolute -bottom-56 -right-56 w-[800px] h-[800px] bg-[radial-gradient(closest-side,rgb(255_255_255/0.2),transparent)]" />
       </motion.div>
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-start">
@@ -624,6 +666,8 @@ function About() {
             <img
               src={profilePic}
               alt="Abdullah Azmi"
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
           </div>
@@ -760,12 +804,17 @@ const marqueeTech = [
 ];
 
 function TechMarquee() {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref);
+
   return (
-    <section className="relative py-16 bg-[var(--pf-bg)] border-y border-[var(--pf-line)] overflow-hidden">
-      <motion.div
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 40, ease: "linear", repeat: Infinity }}
-        className="flex gap-12 whitespace-nowrap text-4xl md:text-6xl font-black tracking-tight"
+    <section
+      ref={ref}
+      className="relative py-16 bg-[var(--pf-bg)] border-y border-[var(--pf-line)] overflow-hidden"
+    >
+      <div
+        className="tech-marquee flex gap-12 whitespace-nowrap text-4xl md:text-6xl font-black tracking-tight"
+        style={{ animationPlayState: inView ? "running" : "paused" }}
       >
         {[...marqueeTech, ...marqueeTech].map((t, i) => (
           <span key={i} className="flex items-center gap-12">
@@ -775,7 +824,7 @@ function TechMarquee() {
             <span style={{ color: "var(--pf-accent)" }}>✦</span>
           </span>
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -880,8 +929,11 @@ function SkillCard({
     >
       <div
         aria-hidden
-        className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-10 blur-3xl group-hover:opacity-20 transition"
-        style={{ background: "var(--pf-accent)" }}
+        className="absolute -top-32 -right-32 w-64 h-64 opacity-10 group-hover:opacity-20 transition"
+        style={{
+          background:
+            "radial-gradient(closest-side, var(--pf-accent), transparent)",
+        }}
       />
 
       <div className="relative">
@@ -1563,8 +1615,12 @@ function GithubActivity() {
   const [failed, setFailed] = useState(false);
   const [view, setView] = useState<"2d" | "3d">("3d");
   const cache = useRef(new Map<ActivityPeriod, ContributionDay[]>());
+  // Fetch and build the chart only once the visitor gets close to it.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const near = useInView(rootRef, { once: true, margin: "800px" });
 
   useEffect(() => {
+    if (!near) return;
     const cached = cache.current.get(period);
     if (cached) {
       setShown({ period, data: cached });
@@ -1587,7 +1643,7 @@ function GithubActivity() {
         if (!ctrl.signal.aborted) setFailed(true);
       });
     return () => ctrl.abort();
-  }, [period]);
+  }, [period, near]);
 
   // Rather show nothing than an empty or fake graph.
   if (failed) return null;
@@ -1596,7 +1652,7 @@ function GithubActivity() {
   const loading = shown?.period !== period;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pt-20 pb-24">
+    <div ref={rootRef} className="max-w-6xl mx-auto px-6 pt-20 pb-24">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="inline-block px-4 py-1.5 rounded-full border border-[var(--pf-card-border)] text-xs tracking-[0.2em] uppercase text-[var(--pf-fg)] mb-5">
@@ -2413,6 +2469,7 @@ function Contact() {
     offset: ["start end", "end end"],
   });
   const reveal = useTransform(revealProgress, [0, 1], ["-100%", "0%"]);
+  const inView = useInView(ref);
 
   return (
     <section
@@ -2426,7 +2483,8 @@ function Contact() {
       >
         <div
           aria-hidden
-          className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[80vw] rounded-[50%] blur-[80px]"
+          className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[80vw]"
+          style={{ animationPlayState: inView ? "running" : "paused" }}
         />
         <div
           aria-hidden
