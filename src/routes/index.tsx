@@ -27,6 +27,7 @@ import smartIndiaTeam from "@/assets/internal-sih/team-win.webp";
 import gdgTeam from "@/assets/gdg/gdg-team.webp";
 import githubFoundationsCert from "@/assets/Foundations.webp";
 import mongodbDataModelerCert from "@/assets/mongodb-data-modeler.webp";
+import naturalHealerShot from "@/assets/projects/natural-healer.webp";
 import ideaEvaluatorShot from "@/assets/projects/idea-evaluator.webp";
 import financeTwinShot from "@/assets/projects/finance-twin.webp";
 import {
@@ -1392,6 +1393,8 @@ const projects = [
     subtitle: "Empowering wellness through nature",
     body: "A full-stack AI-powered wellness platform delivering personalized health guidance. Combines structured healthcare datasets with domain-specific knowledge and intelligent recommendation workflows to generate contextual, actionable insights for users.",
     tech: ["Python", "React", "Next.js", "Firebase", "LangFlow", "LLaMA"],
+    live: "https://natural-healer.vercel.app/",
+    image: naturalHealerShot,
   },
   {
     n: "02",
