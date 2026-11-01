@@ -2467,8 +2467,9 @@ function Contact() {
   // Curtain reveal: while the section scrolls in, its content holds still on screen,
   // so the page above slides off it instead of the section scrolling up with the page.
   const reduced = useReducedMotion();
+  const curtainRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: revealProgress } = useScroll({
-    target: ref,
+    target: curtainRef,
     offset: ["start end", "end end"],
   });
   const reveal = useTransform(revealProgress, [0, 1], ["-100%", "0%"]);
@@ -2480,87 +2481,90 @@ function Contact() {
       ref={ref}
       className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)] overflow-hidden"
     >
-      <motion.div
-        style={reduced ? undefined : { y: reveal }}
-        className="relative pt-40 px-6"
-      >
-        <div
-          aria-hidden
-          className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[80vw]"
-          style={{ animationPlayState: inView ? "running" : "paused" }}
-        />
-        <div
-          aria-hidden
-          className="contact-grid pointer-events-none absolute inset-0"
-        />
+      {/* Behind the whole section, the name included. */}
+      <div
+        aria-hidden
+        className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-full w-full"
+        style={{ animationPlayState: inView ? "running" : "paused" }}
+      />
+      <div
+        aria-hidden
+        className="contact-grid pointer-events-none absolute inset-0"
+      />
+      <div ref={curtainRef} className="relative overflow-hidden">
         <motion.div
-          style={{ y, scale }}
-          className="relative max-w-5xl mx-auto text-center"
+          style={reduced ? undefined : { y: reveal }}
+          className="relative pt-40 pb-24 px-6"
         >
-          <p
-            className="text-xs tracking-[0.3em] uppercase mb-8"
-            style={{ color: "var(--pf-accent)" }}
+          <motion.div
+            style={{ y, scale }}
+            className="relative max-w-5xl mx-auto text-center"
           >
-            Let's build something
-          </p>
-          <h2 className="text-6xl md:text-9xl font-black tracking-tight leading-[0.9]">
-            Say
-            <br />
-            <span style={{ color: "var(--pf-accent)" }}>
-              مَرْحَبًا Hello नमस्ते
-            </span>
-          </h2>
-          <p className="mt-10 text-[var(--pf-fg-muted)] max-w-xl mx-auto text-lg">
-            Open to internships, freelance builds, and full-time roles in AI &
-            Full-Stack engineering. I typically respond within 24–48 hours.
-          </p>
+            <p
+              className="text-xs tracking-[0.3em] uppercase mb-8"
+              style={{ color: "var(--pf-accent)" }}
+            >
+              Let's build something
+            </p>
+            <h2 className="text-6xl md:text-9xl font-black tracking-tight leading-[0.9]">
+              Say
+              <br />
+              <span style={{ color: "var(--pf-accent)" }}>
+                مَرْحَبًا Hello नमस्ते
+              </span>
+            </h2>
+            <p className="mt-10 text-[var(--pf-fg-muted)] max-w-xl mx-auto text-lg">
+              Open to internships, freelance builds, and full-time roles in AI &
+              Full-Stack engineering. I typically respond within 24–48 hours.
+            </p>
 
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-            <WebShotLink
-              href={GMAIL_COMPOSE_URL}
-              target="_blank"
-              rel="noreferrer"
-              size="lg"
-              variant="accent"
-            >
-              <MailIcon className="w-5 h-5" />
-              Email me
-            </WebShotLink>
-            <WebShotLink
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noreferrer"
-              size="lg"
-            >
-              <WhatsAppIcon className="w-5 h-5" />
-              WhatsApp
-            </WebShotLink>
-          </div>
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+              <WebShotLink
+                href={GMAIL_COMPOSE_URL}
+                target="_blank"
+                rel="noreferrer"
+                size="lg"
+                variant="accent"
+              >
+                <MailIcon className="w-5 h-5" />
+                Email me
+              </WebShotLink>
+              <WebShotLink
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noreferrer"
+                size="lg"
+              >
+                <WhatsAppIcon className="w-5 h-5" />
+                WhatsApp
+              </WebShotLink>
+            </div>
 
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <a
-              href={LINKEDIN_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
-            >
-              <LinkedInIcon className="w-4 h-4" />
-            </a>
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
-            >
-              <GithubIcon className="w-4 h-4" />
-            </a>
-          </div>
+            <div className="mt-10 flex items-center justify-center gap-4">
+              <a
+                href={LINKEDIN_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
+              >
+                <LinkedInIcon className="w-4 h-4" />
+              </a>
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="w-12 h-12 rounded-full border border-[var(--pf-card-border)] flex items-center justify-center hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)] transition"
+              >
+                <GithubIcon className="w-4 h-4" />
+              </a>
+            </div>
+          </motion.div>
         </motion.div>
-        {/* Sits on the line that closes the page, cropped by it. */}
-        <div className="relative mt-24">
-          <HalftoneWordmark word="Abdullah Azmi" />
-        </div>
-      </motion.div>
+      </div>
+      {/* Outside the curtain so it scrolls with the page; cropped by the closing line. */}
+      <div className="relative">
+        <HalftoneWordmark word="Abdullah Azmi" />
+      </div>
     </section>
   );
 }
