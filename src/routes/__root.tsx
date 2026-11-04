@@ -14,6 +14,16 @@ import appCss from "../styles.css?url";
 import favicon from "@/assets/icons/favicon.png";
 import appleTouchIcon from "@/assets/icons/apple-touch-icon.png";
 import { SITE_URL } from "@/lib/site";
+import { AnimatedGradientBackground } from "@/components/animated-gradient-background";
+
+// Page colour at the centre, warming to the accent red toward the edges.
+const NOT_FOUND_GRADIENT: [string, number][] = [
+  ["var(--pf-bg)", 35],
+  ["color-mix(in oklab, var(--pf-accent) 18%, var(--pf-bg))", 48],
+  ["color-mix(in oklab, var(--pf-accent) 45%, var(--pf-bg))", 62],
+  ["color-mix(in oklab, var(--pf-accent) 80%, var(--pf-bg))", 78],
+  ["var(--pf-accent)", 100],
+];
 
 function NotFoundComponent() {
   const { pathname } = useLocation();
@@ -25,18 +35,20 @@ function NotFoundComponent() {
   });
 
   return (
-    <div
-      className="relative flex min-h-screen flex-col overflow-hidden bg-[var(--pf-bg)] px-6 font-sans text-[var(--pf-fg)] antialiased selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)]"
-      style={{
-        backgroundImage:
-          "linear-gradient(to right, var(--pf-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--pf-grid) 1px, transparent 1px)",
-        backgroundSize: "80px 80px",
-      }}
-    >
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[var(--pf-bg)] px-6 font-sans text-[var(--pf-fg)] antialiased selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)]">
+      <AnimatedGradientBackground
+        breathing
+        gradientColors={NOT_FOUND_GRADIENT.map(([color]) => color)}
+        gradientStops={NOT_FOUND_GRADIENT.map(([, stop]) => stop)}
+      />
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
-        style={{ background: "var(--pf-accent-glow)", opacity: 0.35 }}
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, var(--pf-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--pf-grid) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
+        }}
       />
 
       <header className="relative mx-auto flex w-full max-w-6xl items-center pt-8">
