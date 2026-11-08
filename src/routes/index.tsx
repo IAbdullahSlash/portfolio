@@ -1608,14 +1608,65 @@ const ACTIVITY_PERIODS = [
 ];
 type ActivityPeriod = string;
 
+type SavedContributions = { savedAt: string; data: ContributionDay[] };
+
+// The feed (and GitHub behind it) has outages; keep each visitor's last good copy.
+const savedKey = (period: ActivityPeriod) =>
+  `portfolio-contributions:${period}`;
+
+function readSaved(period: ActivityPeriod): SavedContributions | null {
+  try {
+    const raw = localStorage.getItem(savedKey(period));
+    return raw ? (JSON.parse(raw) as SavedContributions) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeSaved(period: ActivityPeriod, data: ContributionDay[]) {
+  try {
+    localStorage.setItem(
+      savedKey(period),
+      JSON.stringify({ savedAt: new Date().toISOString(), data }),
+    );
+  } catch {
+    // Storage blocked or full: the chart still works, just without the offline copy.
+  }
+}
+
+/** Fetch one period, retrying a couple of times with a growing pause. */
+async function fetchContributions(
+  period: ActivityPeriod,
+  signal: AbortSignal,
+): Promise<ContributionDay[]> {
+  let lastError: unknown;
+  for (const wait of [0, 1500, 4000]) {
+    if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
+    if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+    try {
+      const r = await fetch(`${CONTRIBUTIONS_URL}?y=${period}`, { signal });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d: { contributions: ContributionDay[] } = await r.json();
+      return d.contributions.map(({ date, count }) => ({ date, count }));
+    } catch (error) {
+      if (signal.aborted) throw error;
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
 function GithubActivity() {
   const [period, setPeriod] = useState<ActivityPeriod>("last");
   // The period on screen; it only changes once that period's data has arrived, so the chart never blanks.
   const [shown, setShown] = useState<{
     period: ActivityPeriod;
     data: ContributionDay[];
+    /** Set when this is a saved copy shown because the live data failed. */
+    savedAt?: string;
   } | null>(null);
   const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [view, setView] = useState<"2d" | "3d">("3d");
   const cache = useRef(new Map<ActivityPeriod, ContributionDay[]>());
   // Fetch and build the chart only once the visitor gets close to it.
@@ -1630,26 +1681,22 @@ function GithubActivity() {
       return;
     }
     const ctrl = new AbortController();
-    fetch(`${CONTRIBUTIONS_URL}?y=${period}`, { signal: ctrl.signal })
-      .then((r) =>
-        r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)),
-      )
-      .then((d: { contributions: ContributionDay[] }) => {
-        const days = d.contributions.map(({ date, count }) => ({
-          date,
-          count,
-        }));
+    setFailed(false);
+    fetchContributions(period, ctrl.signal)
+      .then((days) => {
         cache.current.set(period, days);
+        writeSaved(period, days);
         setShown({ period, data: days });
       })
       .catch(() => {
-        if (!ctrl.signal.aborted) setFailed(true);
+        if (ctrl.signal.aborted) return;
+        const saved = readSaved(period);
+        if (saved)
+          setShown({ period, data: saved.data, savedAt: saved.savedAt });
+        else setFailed(true);
       });
     return () => ctrl.abort();
-  }, [period, near]);
-
-  // Rather show nothing than an empty or fake graph.
-  if (failed) return null;
+  }, [period, near, attempt]);
 
   const isYear = shown && shown.period !== "last";
   const loading = shown?.period !== period;
@@ -1699,7 +1746,32 @@ function GithubActivity() {
           </a>
         </div>
       </div>
-      {shown ? (
+      {failed && shown?.period !== period ? (
+        <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] px-6 py-16 text-center">
+          <p className="max-w-md text-[var(--pf-fg-muted)]">
+            GitHub isn't serving contribution data right now. It's usually back
+            within a few minutes.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setAttempt((n) => n + 1)}
+              className="rounded-full bg-[var(--pf-fg)] px-5 py-2 text-sm font-semibold text-[var(--pf-bg)] transition hover:opacity-90"
+            >
+              Try again
+            </button>
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--pf-glass-border-strong)] px-5 py-2 text-sm font-semibold transition hover:bg-[var(--pf-fg)] hover:text-[var(--pf-bg)]"
+            >
+              View on GitHub
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      ) : shown ? (
         <div
           className={`transition-opacity duration-300 ${loading ? "opacity-50" : "opacity-100"}`}
         >
@@ -1724,6 +1796,17 @@ function GithubActivity() {
               ) : undefined
             }
           />
+          {shown.savedAt && (
+            <p className="mt-3 text-center text-xs text-[var(--pf-fg-subtle)]">
+              GitHub isn't responding right now, so this is the copy saved on{" "}
+              {new Date(shown.savedAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+              .
+            </p>
+          )}
         </div>
       ) : (
         <div className="h-[320px] rounded-3xl border border-[var(--pf-card-border)] bg-[var(--pf-card-bg)] animate-pulse" />
