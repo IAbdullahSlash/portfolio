@@ -15,7 +15,6 @@ import {
   useSpring,
   useAnimate,
   useInView,
-  useReducedMotion,
 } from "framer-motion";
 import heroVideo from "@/assets/hero.mp4";
 import profilePic from "@/assets/abdullah.webp";
@@ -210,21 +209,24 @@ function Portfolio() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[var(--pf-bg)] text-[var(--pf-fg)] antialiased font-sans selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)] overflow-x-hidden">
+    <div className="relative min-h-screen bg-[var(--pf-bg)] text-[var(--pf-fg)] antialiased font-sans selection:bg-[var(--pf-accent)] selection:text-[var(--pf-text-on-accent)] overflow-x-clip isolate">
       <ScrollProgressBar />
       <AnimatePresence>{!introDone && <Intro />}</AnimatePresence>
       <Nav theme={theme} onToggleTheme={toggleTheme} />
-      <Hero />
-      <About />
-      <TechMarquee />
-      <Skills />
-      <Process />
-      <Experience />
-      <Projects />
-      <Achievements />
-      <Publications />
-      <Certifications />
-      <Education />
+      {/* Opaque, so it covers the pinned contact section as it slides away. */}
+      <div className="bg-[var(--pf-bg)]">
+        <Hero />
+        <About />
+        <TechMarquee />
+        <Skills />
+        <Process />
+        <Experience />
+        <Projects />
+        <Achievements />
+        <Publications />
+        <Certifications />
+        <Education />
+      </div>
       <Contact />
       <Footer />
     </div>
@@ -2544,50 +2546,45 @@ function Education() {
 /* CONTACT                                                             */
 /* ------------------------------------------------------------------ */
 function Contact() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1, 1.05]);
+  const curtainRef = useRef<HTMLElement>(null);
+  const nameRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(curtainRef);
+  const [nameHeight, setNameHeight] = useState(0);
 
-  // Curtain reveal: while the section scrolls in, its content holds still on screen,
-  // so the page above slides off it instead of the section scrolling up with the page.
-  const reduced = useReducedMotion();
-  const curtainRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: revealProgress } = useScroll({
-    target: curtainRef,
-    offset: ["start end", "end end"],
-  });
-  const reveal = useTransform(revealProgress, [0, 1], ["-100%", "0%"]);
-  const inView = useInView(ref);
+  // The background runs on behind the name, which sits outside the pinned part.
+  useEffect(() => {
+    const name = nameRef.current;
+    if (!name) return;
+    const ro = new ResizeObserver(() => setNameHeight(name.offsetHeight));
+    ro.observe(name);
+    return () => ro.disconnect();
+  }, []);
 
   return (
-    <section
-      id="contact"
-      ref={ref}
-      className="relative bg-[var(--pf-bg)] border-t border-[var(--pf-line)] overflow-hidden"
-    >
-      {/* Behind the whole section, the name included. */}
-      <div
-        aria-hidden
-        className="contact-aurora pointer-events-none absolute left-1/2 top-1/2 h-full w-full"
-        style={{ animationPlayState: inView ? "running" : "paused" }}
-      />
-      <div
-        aria-hidden
-        className="contact-grid pointer-events-none absolute inset-0"
-      />
-      <div ref={curtainRef} className="relative overflow-hidden">
-        <motion.div
-          style={reduced ? undefined : { y: reveal }}
-          className="relative pt-40 pb-24 px-6"
+    <>
+      {/*
+        Curtain reveal, done by the browser: the section is pinned to the bottom of the
+        screen (sticky) beneath the page (-z-10), so the sections above slide off it.
+        No scroll-linked JS, so nothing lags a frame behind the scroll.
+      */}
+      <section
+        id="contact"
+        ref={curtainRef}
+        className="sticky bottom-0 -z-10 bg-[var(--pf-bg)] border-t border-[var(--pf-line)]"
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 overflow-hidden"
+          style={{ height: `calc(100% + ${nameHeight}px)` }}
         >
-          <motion.div
-            style={{ y, scale }}
-            className="relative max-w-5xl mx-auto text-center"
-          >
+          <div
+            className="contact-aurora absolute left-1/2 top-1/2 h-full w-full"
+            style={{ animationPlayState: inView ? "running" : "paused" }}
+          />
+          <div className="contact-grid absolute inset-0" />
+        </div>
+        <div className="relative pt-40 pb-24 px-6">
+          <div className="max-w-5xl mx-auto text-center">
             <p
               className="text-xs tracking-[0.3em] uppercase mb-8"
               style={{ color: "var(--pf-accent)" }}
@@ -2646,14 +2643,14 @@ function Contact() {
                 <GithubIcon className="w-4 h-4" />
               </a>
             </div>
-          </motion.div>
-        </motion.div>
-      </div>
-      {/* Outside the curtain so it scrolls with the page; cropped by the closing line. */}
-      <div className="relative">
+          </div>
+        </div>
+      </section>
+      {/* Scrolls with the page over the same background; cropped by the closing line. */}
+      <div ref={nameRef} className="relative">
         <HalftoneWordmark word="Abdullah Azmi" />
       </div>
-    </section>
+    </>
   );
 }
 
