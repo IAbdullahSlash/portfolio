@@ -502,12 +502,17 @@ function Hero() {
   const [playing, setPlaying] = useState(false);
   const videoInView = useInView(videoRef);
 
-  // Stop decoding the reel while it is off screen, unless it is playing with sound.
+  // Off screen the reel goes quiet and stops decoding; back on screen it resumes muted.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (videoInView) v.play().catch(() => {});
-    else if (v.muted) v.pause();
+    if (videoInView) {
+      v.play().catch(() => {});
+      return;
+    }
+    v.muted = true;
+    v.pause();
+    setPlaying(false);
   }, [videoInView]);
 
   const togglePlay = () => {
