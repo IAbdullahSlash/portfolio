@@ -29,6 +29,7 @@ import mongodbDataModelerCert from "@/assets/mongodb-data-modeler.webp";
 import naturalHealerShot from "@/assets/projects/natural-healer.webp";
 import ideaEvaluatorShot from "@/assets/projects/idea-evaluator.webp";
 import financeTwinShot from "@/assets/projects/finance-twin.webp";
+import lucknow3dShot from "@/assets/projects/lucknow-3d.webp";
 import {
   ArrowLeft,
   ArrowRight,
@@ -1429,6 +1430,23 @@ const projects = [
     tech: ["Python", "MongoDB", "Pandas", "NumPy", "PyQtGraph", "Scikit Learn"],
     live: "https://finance-twin.vercel.app/",
     image: financeTwinShot,
+  },
+  {
+    n: "04",
+    tag: "3D · Cultural Heritage",
+    name: "Hussainabad, Lucknow in 3D",
+    subtitle: "Lucknow's heritage mile, walkable in the browser",
+    body: "An animated, walkable 3D model of Lucknow's Hussainabad precinct, from the Clock Tower to the Bara Imambara, set on its real street map from OpenStreetMap. Hand-modelled monuments, a live sun path and weather for Lucknow time, crowds and traffic that follow the hour, and explore, walk and guided-tour modes on desktop and phone.",
+    tech: [
+      "Three.js",
+      "JavaScript",
+      "WebGL",
+      "OpenStreetMap",
+      "Python",
+      "Web Audio",
+    ],
+    live: "https://lucknow-3d.vercel.app/",
+    image: lucknow3dShot,
   },
 ];
 
