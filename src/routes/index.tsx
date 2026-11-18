@@ -1436,7 +1436,7 @@ const projects = [
     tag: "3D · Cultural Heritage",
     name: "Hussainabad, Lucknow in 3D",
     subtitle: "Lucknow's heritage mile, walkable in the browser",
-    body: "An animated, walkable 3D model of Lucknow's Hussainabad precinct, from the Clock Tower to the Bara Imambara, set on its real street map from OpenStreetMap. Hand-modelled monuments, a live sun path and weather for Lucknow time, crowds and traffic that follow the hour, and explore, walk and guided-tour modes on desktop and phone.",
+    body: "A walkable 3D model of old Lucknow around the Clock Tower, rebuilt from scratch: 1.8 km × 1.3 km of the city with about 1,900 houses, 58 real shops and 52 km of streets made from 477 real OpenStreetMap road segments. Hand-modelled monuments from the Clock Tower to the Bara Imambara, six times of day including live Lucknow time, nine kinds of street cart, and explore, walk and guided-tour modes on desktop and phone.",
     tech: [
       "Three.js",
       "JavaScript",
